@@ -20,7 +20,7 @@ app.use(morgan("dev"));
 app.options("*", cors());
 app.use(cors());
 
-app.use('api/payment', paymentRouter);
+app.use('/api/payment', paymentRouter);
 
 
 app.use(express.static("public"));
