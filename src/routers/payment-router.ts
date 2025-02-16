@@ -7,17 +7,6 @@ const router = Router();
 
 
 
-router.post("/try", async (req, res) => {
-    try {
-        await paymentService.handleCallback(req.body);
-        res.status(200).send("OK");
-    } catch (error) {
-        console.error("Error handling Nedarim callback:", error);
-        res.status(500).send("Internal Server Error");
-    }
-});
-
-
 router.post("/nedarim", async (req, res) => {
     try {
         const allowedIP = "18.194.219.73";

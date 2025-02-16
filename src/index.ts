@@ -28,6 +28,7 @@ app.use(errorHandler);
 app.use(notFound);
 
 
-app.listen(8080, () => {
-    Logger.log("Server is running on port 8080");
+app.listen(process.env.PORT || 3000, () => {
+    console.log('השרת פועל');
 });
+
