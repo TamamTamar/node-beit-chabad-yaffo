@@ -5,29 +5,38 @@ const router = Router();
 
 // הגדרת כתובת ה-IP המורשת
 const allowedIP = "18.194.219.73";
+// המפתח הסודי לאימות
+const SECRET_KEY = process.env.SECRET_KEY;
 
 router.post("/nedarim", async (req, res) => {
     try {
-        // קבלת ה-IP של הבקשה
-        const requestIP = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+        const data = req.body;
 
-        // הצגת ה-IP שהתקבל לצורכי debugging
-        console.log("IP של הבקשה:", requestIP);
-
-        // בדיקה אם ה-IP הוא ה-IP המורשה
-        if (requestIP !== allowedIP) {
-            return res.status(403).send("Unauthorized"); // אם ה-IP לא תואם, מחזירים שגיאה 403
+        // לוודא שהבקשה מכילה נתונים
+        if (!data || typeof data !== "object") {
+            return res.status(400).send("Invalid request format");
         }
 
-        // קריאה לפונקציית הטיפול בנתונים לאחר שהבקשה מאושרת
-        await paymentService.handleCallback(req.body);
+        console.log("Received Callback Data:", data);
 
-        // מחזירים תשובה בהצלחה
+        // דוגמה לשליפת נתונים לפי שם המפתח, בלי תלות בסדר
+        const transactionId = data.TransactionID;
+        const amount = data.Amount;
+        const status = data.Status;
+        
+        if (!transactionId || !amount || !status) {
+            return res.status(400).send("Missing required fields");
+        }
+
+        // שמירת העסקה במערכת שלנו
+        await paymentService.handleCallback(data);
+
         res.status(200).send("OK");
     } catch (error) {
-        console.error("Error handling Nedarim callback:", error);
-        res.status(500).send("Internal Server Error"); // שגיאת שרת
+        console.error("Error handling callback:", error);
+        res.status(500).send("Internal Server Error");
     }
 });
+
 
 export { router as paymentRouter };
