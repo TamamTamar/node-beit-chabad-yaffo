@@ -10,33 +10,16 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 router.post("/nedarim", async (req, res) => {
     try {
-        const data = req.body;
+        console.log("Received Callback Data:", req.body); // 🔍 בדיקה מה נשלח
 
-        // לוודא שהבקשה מכילה נתונים
-        if (!data || typeof data !== "object") {
-            return res.status(400).send("Invalid request format");
-        }
+        res.status(200).send("OK"); // להחזיר 200 כדי שהמערכת שלהם לא תשלח שגיאה
 
-        console.log("Received Callback Data:", data);
-
-        // דוגמה לשליפת נתונים לפי שם המפתח, בלי תלות בסדר
-        const transactionId = data.TransactionID;
-        const amount = data.Amount;
-        const status = data.Status;
-        
-        if (!transactionId || !amount || !status) {
-            return res.status(400).send("Missing required fields");
-        }
-
-        // שמירת העסקה במערכת שלנו
-        await paymentService.handleCallback(data);
-
-        res.status(200).send("OK");
     } catch (error) {
         console.error("Error handling callback:", error);
         res.status(500).send("Internal Server Error");
     }
 });
+
 
 
 export { router as paymentRouter };
