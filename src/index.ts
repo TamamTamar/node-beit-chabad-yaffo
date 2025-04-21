@@ -7,11 +7,15 @@ import notFound from './errors/not-found';
 import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
+import { Logger } from './logs/logger'; // ייבוא מחלקת Logger
 
 // קוראים לפונקציה כדי לטעון את משתני הסביבה
 configDevEnv();
-connect();
+Logger.log("Environment variables loaded successfully."); // לוג לטעינת משתני סביבה
 
+connect()
+  .then(() => Logger.log("Connected to the database successfully."))
+  .catch((err) => Logger.error(`Failed to connect to the database: ${err.message}`));
 
 const app = express();
 
@@ -23,13 +27,11 @@ app.use(cors());
 app.use('/api/payment', paymentRouter);
 app.use('/api/rishum', rishumRouter);
 
-
 app.use(express.static("public"));
 app.use(errorHandler);
 app.use(notFound);
 
-
-app.listen(process.env.PORT || 8080, () => {
-    console.log('השרת פועל');
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    Logger.log(`Server is running on http://localhost:${PORT}`);
 });
-
