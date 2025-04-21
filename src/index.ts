@@ -6,6 +6,7 @@ import connect from './db/connection';
 import notFound from './errors/not-found';
 import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
+import { rishumRouter } from './routers/rishum-router';
 
 // קוראים לפונקציה כדי לטעון את משתני הסביבה
 configDevEnv();
@@ -20,7 +21,7 @@ app.options("*", cors());
 app.use(cors());
 
 app.use('/api/payment', paymentRouter);
-app.use('/api/rishum', paymentRouter);
+app.use('/api/rishum', rishumRouter);
 
 
 app.use(express.static("public"));
