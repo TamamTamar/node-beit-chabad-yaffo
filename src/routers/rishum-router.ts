@@ -6,9 +6,12 @@ const router = Router();
 router.post("/", async (req, res, next) => {
     try {
         const result = await ShabbatService.createNewRishumShabbat(req.body);
+        if (!result) {
+            return res.status(400).json({ message: "Failed to create new Rishum Shabbat" });
+        }
         res.status(201).json(result);
-    } catch (error) {
-        next(error);
+    } catch (e) {
+        next(e);
     }
 });
 
