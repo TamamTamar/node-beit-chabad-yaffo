@@ -259,8 +259,8 @@ export interface RishumShabbatType {
   date: string;
   totalPrice: number;
   createdAt: Date;
-  products: {
-      name: string;
+  name: string;
+  people: {
       adults: {
           quantity: number;
           price: number;
@@ -269,5 +269,5 @@ export interface RishumShabbatType {
           quantity: number;
           price: number;
       };
-  }[];
+  };
 }
