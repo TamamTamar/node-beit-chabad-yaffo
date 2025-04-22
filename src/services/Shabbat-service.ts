@@ -12,5 +12,8 @@ export const ShabbatService = {
 
         return rishumShabbat.save();
     },
+    getAllRishumShabbat: async () => {
+        return RishumShabbat.find();
+    },
 
 }
