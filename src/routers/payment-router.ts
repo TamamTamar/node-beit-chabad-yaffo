@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { PaymentSchema } from '../db/schemas/PaymentSchema';
 import { Payment } from '../db/models/PaymentModel';
 
 
@@ -7,11 +6,16 @@ const router = Router();
 
 // הגדרת כתובת ה-IP המורשת
 const allowedIP = "18.194.219.73";
-// המפתח הסודי לאימות
-const SECRET_KEY = process.env.SECRET_KEY;
 
 router.post("/nedarim", async (req, res) => {
     try {
+        // בדיקת כתובת ה-IP של הבקשה
+        const requestIP = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+        if (requestIP !== allowedIP) {
+            console.error(`Unauthorized access attempt from IP: ${requestIP}`);
+            return res.status(403).send("Forbidden: Unauthorized IP");
+        }
+
         const data = req.body;
 
         // יצירת אובייקט חדש עם הנתונים
