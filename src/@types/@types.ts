@@ -253,11 +253,21 @@ export type CarouselImageInput = {
 // סוג חדש לעדכון תמונה
 export type CarouselImageUpdateInput = Partial<CarouselImageInput>;
 
-export type RishumShabbatType = {
-  date: string; // תאריך השבת
-  parasha: string; // פרשת השבוע
-  name: string; // שם השבת
-  createdAt: Date; // תאריך יצירת הרשומה
-  adult: string; // תאריך יצירת הרשומה
-  child: string; // תאריך יצירת הרשומה
+export interface RishumShabbatType {
+  _id: string;
+  parasha: string;
+  date: string;
+  totalPrice: number;
+  createdAt: Date;
+  products: {
+      name: string;
+      adults: {
+          quantity: number;
+          price: number;
+      };
+      children: {
+          quantity: number;
+          price: number;
+      };
+  }[];
 }

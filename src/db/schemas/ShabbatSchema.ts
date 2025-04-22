@@ -1,13 +1,22 @@
 import mongoose from 'mongoose';
 import { RishumShabbatType } from '../../@types/@types';
 
-
 export const ShabbatSchema = new mongoose.Schema<RishumShabbatType>({
     parasha: { type: String, required: true },
     date: { type: String, required: true },
-    name: { type: String, required: true },
-    adult: { type: String, required: true },
-    child: { type: String, required: true },
+    totalPrice: { type: Number, required: true }, // מחיר כולל
+    products: [
+        {
+            name: { type: String, required: true }, // שם המוצר
+            adults: {
+                quantity: { type: Number, required: true }, // כמות מבוגרים
+                price: { type: Number, required: true }, // מחיר למבוגרים
+            },
+            children: {
+                quantity: { type: Number, required: true }, // כמות ילדים
+                price: { type: Number, required: true }, // מחיר לילדים
+            },
+        },
+    ],
     createdAt: { type: Date, default: Date.now },
 });
-
