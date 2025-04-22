@@ -7,7 +7,7 @@ const router = Router();
 //create new Rishum Shabbat
 router.post('/register', async (req, res) => {
     try {
-        const { parasha, date, totalPrice, name, people } = req.body;
+        const { parasha, date, totalPrice, name, people, phone } = req.body;
 
         // בדיקת שדות חובה
         if (!parasha || !date || !totalPrice || !name || !people) {
@@ -20,6 +20,7 @@ router.post('/register', async (req, res) => {
             date,
             totalPrice,
             name,
+            phone, // Optional field, default to empty string if not provided
             people,
             _id: undefined, // Assign a default or generate an ID if needed
             createdAt: new Date(), // Add the current timestamp

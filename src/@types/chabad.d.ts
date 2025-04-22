@@ -41,4 +41,24 @@ export type IImage = {
     currency: number;  // 1 (שקל) | 2 (דולר)
     callbackUrl: string;
   }
+  export interface PaymentType {
+    Mosad: string;
+    ApiValid: string;
+    Zeout: string;
+    FirstName: string;
+    LastName: string;
+    Street?: string;
+    City?: string;
+    Phone?: string;
+    Mail?: string;
+    PaymentType: string;
+    Amount: number;
+    Tashlumim: number;
+    Currency: number;
+    Groupe?: string;
+    Comment?: string;
+    CallBack: string;
+    CallBackMailError: string;
+    createdAt?: Date;
+}
   

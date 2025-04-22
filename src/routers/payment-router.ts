@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { paymentService } from '../services/payment-service';
+import { PaymentSchema } from '../db/schemas/PaymentSchema';
+import { Payment } from '../db/models/PaymentModel';
+
 
 const router = Router();
 
@@ -10,16 +12,40 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 router.post("/nedarim", async (req, res) => {
     try {
-        console.log("Received Callback Data:", req.body); // 🔍 בדיקה מה נשלח
+        const data = req.body;
+
+        // יצירת אובייקט חדש עם הנתונים
+        const newPaymentData = {
+            Mosad: "7013920",
+            ApiValid: "zidFYCLaNi",
+            Zeout: data.Zeout,
+            FirstName: data.FirstName,
+            LastName: data.LastName,
+            Street: data.Street,
+            City: data.City,
+            Phone: data.Phone,
+            Mail: data.Mail,
+            PaymentType: data.Is12Months ? "HK" : "Ragil",
+            Amount: data.annualAmount,
+            Tashlumim: data.Is12Months ? 12 : data.Tashlumim,
+            Currency: 1,
+            Groupe: data.Groupe,
+            Comment: data.Comment,
+            CallBack: "https://node-beit-chabad-yaffo.onrender.com/api/payment/nedarim",
+            CallBackMailError: "lchabadyaffo@gmail.com",
+        };
+
+        // שמירת הנתונים ב-Database
+        const payment = new Payment(newPaymentData);
+        await payment.save();
+
+        console.log("Payment data saved successfully:", payment);
 
         res.status(200).send("OK"); // להחזיר 200 כדי שהמערכת שלהם לא תשלח שגיאה
-
     } catch (error) {
         console.error("Error handling callback:", error);
         res.status(500).send("Internal Server Error");
     }
 });
-
-
 
 export { router as paymentRouter };

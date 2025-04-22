@@ -6,6 +6,7 @@ export const ShabbatSchema = new mongoose.Schema<RishumShabbatType>({
     date: { type: String, required: true },
     totalPrice: { type: Number, required: true }, // מחיר כולל
     name: { type: String, required: true }, // שם המזמין
+    phone: { type: String, required: true }, // טלפון - שדה אופציונלי
     people: 
         {
             adults: {

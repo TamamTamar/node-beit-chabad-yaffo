@@ -260,6 +260,7 @@ export interface RishumShabbatType {
   totalPrice: number;
   createdAt: Date;
   name: string;
+  phone: string;
   people: {
       adults: {
           quantity: number;
