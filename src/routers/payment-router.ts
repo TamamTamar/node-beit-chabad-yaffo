@@ -8,7 +8,6 @@ const allowedIP = "18.194.219.73";
 
 router.post("/nedarim", async (req, res) => {
     try {
-        // בדיקת כתובת ה-IP של הבקשה
         const requestIP = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
         console.log(`Request received from IP: ${requestIP}`);
         if (requestIP !== allowedIP) {
@@ -16,18 +15,11 @@ router.post("/nedarim", async (req, res) => {
             return res.status(403).send("Forbidden: Unauthorized IP");
         }
 
-        // בדיקת ApiValid מה-Headers
-        const apiValidHeader = req.headers["api-valid"];
-        if (apiValidHeader !== "zidFYCLaNi") {
-            console.error("Invalid ApiValid header");
-            return res.status(403).send("Forbidden: Invalid ApiValid header");
-        }
-
         const data = req.body;
 
         const newPaymentData = {
             Mosad: data.MosadNumber,
-            ApiValid: apiValidHeader, // נלקח מה-Headers
+            ApiValid: "zidFYCLaNi",
             Zeout: data.Zeout,
             FirstName: data.ClientName.split(" ")[0],
             LastName: data.ClientName.split(" ")[1] || "",
