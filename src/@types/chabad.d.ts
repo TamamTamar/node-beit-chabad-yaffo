@@ -61,4 +61,9 @@ export type IImage = {
     CallBackMailError: string;
     createdAt?: Date;
 }
-  
+
+export interface prices {
+    adultPrice: number;
+    childPrice: number;
+    couplePrice: number;
+}

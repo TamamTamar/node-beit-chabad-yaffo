@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ShabbatService } from "../services/Shabbat-service";
 import RishumShabbat from "../db/models/ShabbatModel";
+import Price from "../db/models/PriceModel";
 
 const router = Router();
 
@@ -41,6 +42,63 @@ router.get("/", async (req, res, next) => {
             return res.status(400).json({ message: "Failed to get all Rishum Shabbat" });
         }
         res.status(200).json(result);
+    } catch (e) {
+        next(e);
+    }
+});
+
+// שליפת המחירים
+// שליפת המחירים מה-Database
+router.get('/prices', async (req, res) => {
+    try {
+        const prices = await Price.findOne(); // שליפת המחירים (רק מסמך אחד)
+        if (!prices) {
+            return res.status(404).json({ message: "Prices not found" });
+        }
+        res.status(200).json(prices);
+    } catch (error) {
+        console.error("Error fetching prices:", error);
+        res.status(500).json({ message: "Failed to fetch prices" });
+    }
+});
+
+// update prices
+router.put('/prices', async (req, res) => {
+    try {
+        const { adultsPrice, childrenPrice } = req.body;
+
+        // בדיקת שדות חובה
+        if (adultsPrice === undefined || childrenPrice === undefined) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // עדכון המחירים במסמך הקיים
+        const updatedPrices = await Price.findOneAndUpdate(
+            {},
+            { adultsPrice, childrenPrice },
+            { new: true } // מחזיר את המסמך המעודכן
+        );
+
+        if (!updatedPrices) {
+            return res.status(404).json({ message: "Prices not found" });
+        }
+
+        res.status(200).json({ message: "Prices updated successfully", data: updatedPrices });
+    } catch (error) {
+        console.error("Error updating prices:", error);
+        res.status(500).json({ message: "Failed to update prices" });
+    }
+});
+
+//delete Rishum Shabbat
+router.delete("/delete/:id", async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const result = await ShabbatService.deleteRishumShabbat(id);
+        if (!result) {
+            return res.status(400).json({ message: "Failed to delete Rishum Shabbat" });
+        }
+        res.status(200).json({ message: "Rishum Shabbat deleted successfully", data: result });
     } catch (e) {
         next(e);
     }

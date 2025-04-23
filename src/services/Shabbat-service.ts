@@ -10,4 +10,10 @@ export const ShabbatService = {
     getAllRishumShabbat: async () => {
         return RishumShabbat.find();
     },
+    updatePrice: async (id: string, totalPrice: number) => {
+        return RishumShabbat.findByIdAndUpdate(id, { totalPrice }, { new: true });
+    },
+    deleteRishumShabbat: async (id: string) => {
+        return RishumShabbat.findByIdAndDelete(id);
+    }
 };

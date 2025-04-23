@@ -8,51 +8,73 @@ const allowedIP = "18.194.219.73";
 
 router.post("/nedarim", async (req, res) => {
     try {
+        // בדיקת כתובת ה-IP של הבקשה
+        const requestIP = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+        console.log(`Request received from IP: ${requestIP}`);
+        if (requestIP !== allowedIP) {
+            console.error(`Unauthorized access attempt from IP: ${requestIP}`);
+            return res.status(403).send("Forbidden: Unauthorized IP");
+        }
+
+        // בדיקת ApiValid מה-Headers
+        const apiValidHeader = req.headers["api-valid"];
+        if (apiValidHeader !== "zidFYCLaNi") {
+            console.error("Invalid ApiValid header");
+            return res.status(403).send("Forbidden: Invalid ApiValid header");
+        }
+
         const data = req.body;
-        console.log("Request body:", data);
 
         const newPaymentData = {
-            TransactionId: data.TransactionId,
-            ClientId: data.ClientId,
+            Mosad: data.MosadNumber,
+            ApiValid: apiValidHeader, // נלקח מה-Headers
             Zeout: data.Zeout,
-            ClientName: data.ClientName,
-            Adresse: data.Adresse,
+            FirstName: data.ClientName.split(" ")[0],
+            LastName: data.ClientName.split(" ")[1] || "",
+            Street: data.Adresse,
+            City: "",
             Phone: data.Phone,
             Mail: data.Mail,
+            PaymentType: data.TransactionType,
             Amount: parseFloat(data.Amount),
+            Tashlumim: parseInt(data.Tashloumim),
             Currency: parseInt(data.Currency),
-            TransactionTime: data.TransactionTime,
-            Confirmation: data.Confirmation,
-            LastNum: data.LastNum,
-            Tokef: data.Tokef,
-            TransactionType: data.TransactionType,
             Groupe: data.Groupe,
-            Comments: data.Comments,
-            Tashloumim: parseInt(data.Tashloumim),
-            FirstTashloum: parseFloat(data.FirstTashloum),
-            MosadNumber: data.MosadNumber,
-            CallId: data.CallId,
-            MasofId: data.MasofId,
-            Shovar: data.Shovar,
-            CompagnyCard: data.CompagnyCard,
-            Solek: data.Solek,
-            Tayar: data.Tayar,
-            Makor: data.Makor,
-            KevaId: data.KevaId,
-            DebitIframe: data.DebitIframe,
-            ReceiptCreated: data.ReceiptCreated,
-            ReceiptData: data.ReceiptData,
-            ReceiptDocNum: data.ReceiptDocNum,
+            Comment: data.Comments,
+            CallBack: "https://node-beit-chabad-yaffo.onrender.com/api/payment/nedarim",
+            CallBackMailError: "lchabadyaffo@gmail.com",
         };
-
-        console.log("New payment data:", newPaymentData);
 
         const payment = new Payment(newPaymentData);
         await payment.save();
 
         console.log("Payment data saved successfully:", payment);
 
-        res.status(200).send({ Status: "OK" });
+        res.status(200).send("OK");
+    } catch (error) {
+        console.error("Error handling callback:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+//save payment data to DB
+router.post("/nedarim/save", async (req, res) => {
+    try {
+        const data = req.body;
+        const newPaymentData = {
+            FirstName: data.ClientName.split(" ")[0],
+            LastName: data.ClientName.split(" ")[1] || "",
+            Phone: data.Phone,
+            Amount: parseFloat(data.Amount),
+            Tashlumim: parseInt(data.Tashloumim),
+        };
+
+        const payment = new Payment(newPaymentData);
+        await payment.save();
+
+        console.log("Payment data saved successfully:", payment);
+
+        res.status(200).send("OK");
     } catch (error) {
         console.error("Error handling callback:", error);
         res.status(500).send("Internal Server Error");
