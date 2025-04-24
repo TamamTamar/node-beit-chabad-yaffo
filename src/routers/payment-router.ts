@@ -9,25 +9,28 @@ router.post("/payment-callback", express.urlencoded({ extended: true }), async (
     const paymentData = req.body;
     console.log("Callback data:", paymentData);
   
-    // בדיקה בסיסית
+    // בדיקה אם הסטטוס של העסקה מאושר
     if (paymentData.Status === "Approved") {
-      // שמירה במסד נתונים
+      // יצירת אובייקט נתוני תשלום
       const data = req.body;
       const newPaymentData = {
-          FirstName: data.ClientName.split(" ")[0],
-          LastName: data.ClientName.split(" ")[1] || "",
+          FirstName: data.ClientName,  // שם פרטי (נראה כי יש לך רק שם אחד בשדה)
+          LastName: data.ClientName,   // אפשר לשנות לשדה אחר אם יש, כמו "שם משפחה"
           Phone: data.Phone,
-          Amount: parseFloat(data.Amount),
-          Tashlumim: parseInt(data.Tashloumim),
+          Amount: parseFloat(data.Amount),  // סכום (לפי הנתונים שמתקבלים)
+          Tashloumim: parseInt(data.Tashloumim),  // מספר תשלומים
       };
-
+  
+      // שמירה במסד נתונים
       const payment = new Payment(newPaymentData);
-      await payment.save();
-
+      await payment.save();  // שמירה במסד נתונים
+  
+      console.log("✅ תשלום אושר ושמור במסד נתונים");
     } else {
       console.log("❌ תשלום נכשל או בוטל");
     }
   
+    // תשובה חיובית ל-NedrimPlus שהבקשה התקבלה
     res.status(200).send("OK");
   });
   
