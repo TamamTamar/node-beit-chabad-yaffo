@@ -5,14 +5,25 @@ import express from "express";
 const router = Router();
 
 // הגדרת כתובת ה-IP המורשת
-router.post("/payment-callback", express.urlencoded({ extended: true }), (req, res) => {
+router.post("/payment-callback", express.urlencoded({ extended: true }), async (req, res) => {
     const paymentData = req.body;
     console.log("Callback data:", paymentData);
   
     // בדיקה בסיסית
     if (paymentData.Status === "Approved") {
       // שמירה במסד נתונים
-      console.log("✅ תשלום אושר");
+      const data = req.body;
+      const newPaymentData = {
+          FirstName: data.ClientName.split(" ")[0],
+          LastName: data.ClientName.split(" ")[1] || "",
+          Phone: data.Phone,
+          Amount: parseFloat(data.Amount),
+          Tashlumim: parseInt(data.Tashloumim),
+      };
+
+      const payment = new Payment(newPaymentData);
+      await payment.save();
+
     } else {
       console.log("❌ תשלום נכשל או בוטל");
     }
