@@ -11,11 +11,11 @@ router.post("/nedarim", async (req, res) => {
         // בדיקת כתובת ה-IP של הבקשה
         const requestIP = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
         console.log(`Request received from IP: ${requestIP}`);
-        if (requestIP !== allowedIP) {
+       /*  if (requestIP !== allowedIP) {
             console.error(`Unauthorized access attempt from IP: ${requestIP}`);
             return res.status(403).send("Forbidden: Unauthorized IP");
         }
-
+ */
         // בדיקת ApiValid מה-Headers
         const apiValidHeader = req.headers["api-valid"];
         if (apiValidHeader !== "zidFYCLaNi") {
