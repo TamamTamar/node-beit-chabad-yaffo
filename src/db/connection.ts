@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { Logger } from "../logs/logger";
+import initDB from "./init-db";
+
 
 
 const connect = async () => {
@@ -13,6 +15,8 @@ const connect = async () => {
   }
   try {
     await mongoose.connect(connectionString);
+
+    await initDB(); // Initialize the database with initial data
 
 
     Logger.log("Database Connected");

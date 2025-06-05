@@ -42,16 +42,7 @@ router.post("/payment-callback", express.json(), async (req, res) => {
 router.post("/nedarim/save", async (req, res) => {
     try {
         const data = req.body as PaymentDataToSave;
-        const newPaymentData = {
-            FirstName: data.FirstName,
-            LastName: data.LastName,
-            Phone: data.Phone,
-            Amount: data.Amount,
-            Tashlumim: data.Tashlumim || null,
-        };
-
-        const payment = new Payment(newPaymentData);
-        await payment.save();
+        const payment = await paymentService.savePayment(data);
 
         console.log("Payment data saved successfully:", payment);
 
