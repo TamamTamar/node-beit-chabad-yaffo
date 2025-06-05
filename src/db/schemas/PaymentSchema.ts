@@ -7,6 +7,6 @@ export const PaymentSchema = new mongoose.Schema<PaymentDataToSave>({
   LastName: { type: String, required: true },
   Phone: { type: String, required: false },
   Amount: { type: Number, required: true },
-  Tashlumim: { type: Number, required: true },
+  Tashlumim: { type: Number, required: false, default: 12 }, // ברירת מחדל ל-1 אם לא נמסר
   createdAt: { type: Date, default: Date.now },
 });
