@@ -43,11 +43,11 @@ router.post("/nedarim/save", async (req, res) => {
     try {
         const data = req.body as PaymentDataToSave;
         const newPaymentData = {
-            FirstName: data.FirstName.split(" ")[0],
-            LastName: data.LastName.split(" ")[1] ,
+            FirstName: data.FirstName,
+            LastName: data.LastName,
             Phone: data.Phone,
             Amount: data.Amount,
-            Tashlumim:data.Tashlumim || 1, // אם אין תשלומים, נחשב כ-1
+            Tashlumim: data.Tashlumim || 1,
         };
 
         const payment = new Payment(newPaymentData);
