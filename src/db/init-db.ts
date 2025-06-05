@@ -11,7 +11,11 @@ const initDB = async () => {
       Logger.log("1 or more donations already exist. Skipping donation initialization.");
     } else {
       for (let d of donations) {
-        const existingDonation = await Payment.findOne({ Phone: d.Phone });
+               const existingDonation = await Payment.findOne({
+          FirstName: d.FirstName,
+          LastName: d.LastName,
+          Phone: d.Phone
+        });
         if (!existingDonation) {
           const saved = await Payment.create(d);
           Logger.verbose(`Donation created: ${saved.Phone}`);
