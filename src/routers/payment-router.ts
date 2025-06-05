@@ -3,45 +3,45 @@ import { Payment } from '../db/models/PaymentModel';
 import express from "express";
 import axios from 'axios';
 import { paymentService } from '../services/payment-service';
-import { PaymentType } from '../@types/chabad';
+import { PaymentDataToSave, PaymentInput } from '../@types/chabad';
+
 
 const router = Router();
 
-// הגדרת כתובת ה-IP המורשת
-router.post("/payment-callback", express.urlencoded({ extended: true }), async (req, res) => {
+router.post("/payment-callback", express.json(), async (req, res) => {
     const paymentData = req.body;
+
     console.log("Callback data:", paymentData);
-  
-    // בדיקה אם הסטטוס של העסקה מאושר
-    if (paymentData.Status === "Approved") {
-      // יצירת אובייקט נתוני תשלום
-      const data = req.body;
-      const newPaymentData = {
-          FirstName: data.ClientName,  // שם פרטי (נראה כי יש לך רק שם אחד בשדה)
-          LastName: data.ClientName,   // אפשר לשנות לשדה אחר אם יש, כמו "שם משפחה"
-          Phone: data.Phone,
-          Amount: parseFloat(data.Amount),  // סכום (לפי הנתונים שמתקבלים)
-          Tashloumim: parseInt(data.Tashloumim),  // מספר תשלומים
-      };
-  
-      // שמירה במסד נתונים
-      const payment = new Payment(newPaymentData);
-      await payment.save();  // שמירה במסד נתונים
-  
-      console.log("✅ תשלום אושר ושמור במסד נתונים");
+
+    // בדיקה אם יש Confirmation - נניח שזה מסמל תשלום מאושר
+    if (paymentData.Confirmation) {
+        // כאן אפשר לבצע שמירה במסד הנתונים
+        const newPaymentData = {
+            FirstName: paymentData.ClientName.split(" ")[0],
+            LastName: paymentData.ClientName.split(" ")[1] || "",
+            Phone: paymentData.Phone,
+            Amount: parseFloat(paymentData.Amount),
+            Tashlumim: parseInt(paymentData.Tashloumim || "1"), // ברירת מחדל 1 תשלום
+            // ניתן להוסיף שדות נוספים בהתאם לצורך
+        };
+
+        const payment = new Payment(newPaymentData);
+        await payment.save();
+
+        console.log("✅ תשלום אושר ושמור במסד נתונים");
     } else {
-      console.log("❌ תשלום נכשל או בוטל");
+        console.log("❌ עסקה זמנית או לא אושרה (אין מספר אישור)");
     }
-  
-    // תשובה חיובית ל-NedrimPlus שהבקשה התקבלה
+
     res.status(200).send("OK");
-  });
+});
+
   
   
 //save payment data to DB
 router.post("/nedarim/save", async (req, res) => {
     try {
-        const data = req.body as PaymentType;
+        const data = req.body as PaymentDataToSave;
         const newPaymentData = {
             FirstName: data.FirstName.split(" ")[0],
             LastName: data.LastName.split(" ")[1] || "",
