@@ -61,7 +61,7 @@ export const donations =
     { "FirstName": "ויטל", "LastName": "גיזלגיל", "Phone": "052-4627731", "Amount": 100, "Tashlumim": 1 },
     { "FirstName": "מלונות", "LastName": "המושבה האמריקאית", "Phone": "054-6656588", "Amount": 140, "Tashlumim": 1 },
     { "FirstName": "חגית", "LastName": "פל", "Phone": "054-5767829", "Amount": 200, "Tashlumim": 1 },
-    { "FirstName": "Edoardo", "LastName": "", "Phone": "", "Amount": 180, "Tashlumim": 1 },
+    { "FirstName": "Edoardo", "LastName": "n", "Phone": "", "Amount": 180, "Tashlumim": 1 },
     { "FirstName": "חגית", "LastName": "פל", "Phone": "054-5767829", "Amount": 1000, "Tashlumim": 1 },
     { "FirstName": "לוי", "LastName": "יצחק תמם", "Phone": "053-7700339", "Amount": 5, "Tashlumim": 2 },
     { "FirstName": "יוסף", "LastName": "דוד", "Phone": "", "Amount": 100, "Tashlumim": 1 },
