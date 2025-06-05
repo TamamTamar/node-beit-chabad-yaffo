@@ -1,13 +1,7 @@
 
 export const donations =
   [
-    {
-      "FirstName": "תמר",
-      "LastName": "תמם",
-      "Phone": "054-2193770",
-      "Amount": 1,
-      "Tashlumim": 1
-    },
+
     {
       "FirstName": "יוכבד",
       "LastName": "תמם",
@@ -30,28 +24,7 @@ export const donations =
       "Amount": 24,
       "Tashlumim": 12
     },
-    {
-      "FirstName": "משפחת ",
-      "LastName": "נורני",
-      "Phone": "050-7971725",
-      "Amount": 250,
-      "Tashlumim": 12
-    },
-    {
-      "FirstName": "משפחת",
-      "LastName": "תמם",
-      "Phone": "054-2193770",
 
-      "Amount": 1,
-      "Tashlumim": 12
-    },
-    {
-      "FirstName": "תמר",
-      "LastName": "תמם",
-      "Phone": "054-2193770",
-      "Amount": 1,
-      "Tashlumim": 1
-    },
 
     { "FirstName": "חפץ", "LastName": "זאב", "Phone": "052-7710036", "Amount": 1000, "Tashlumim": 1 },
     { "FirstName": "לוי", "LastName": "יצחק תמם", "Phone": "053-7700339", "Amount": 1, "Tashlumim": 1 },
@@ -67,9 +40,5 @@ export const donations =
     { "FirstName": "לוי", "LastName": "יצחק תמם", "Phone": "053-7700339", "Amount": 5, "Tashlumim": 2 },
     { "FirstName": "יוסף", "LastName": "דוד", "Phone": "", "Amount": 100, "Tashlumim": 1 },
     { "FirstName": "אמיר", "LastName": "בבלר", "Phone": "052-4521847", "Amount": 40, "Tashlumim": 1 },
-    { "FirstName": "לוי", "LastName": "יצחק תמם", "Phone": "053-7700339", "Amount": 2, "Tashlumim": 1 },
-    { "FirstName": "לוי", "LastName": "יצחק תמם", "Phone": "053-7700339", "Amount": 5, "Tashlumim": 1 },
-    { "FirstName": "לוי", "LastName": "יצחק תמם", "Phone": "053-7700339", "Amount": 3, "Tashlumim": 1 },
-    { "FirstName": "תמר", "LastName": "תמם", "Phone": "054-2193770", "Amount": 2, "Tashlumim": 1 },
-    { "FirstName": "תמר", "LastName": "תמם", "Phone": "054-2193770", "Amount": 1, "Tashlumim": 1 }
+   
   ]
