@@ -47,7 +47,7 @@ router.post("/nedarim/save", async (req, res) => {
             LastName: data.LastName,
             Phone: data.Phone,
             Amount: data.Amount,
-            Tashlumim: data.Tashlumim || 1,
+            Tashlumim: data.Tashlumim || null,
         };
 
         const payment = new Payment(newPaymentData);
@@ -62,15 +62,6 @@ router.post("/nedarim/save", async (req, res) => {
     }
 });
 
-router.get('/donations', async (req, res) => {
-  try {
-    const donations = await paymentService.fetchAndAggregateDonations();
-    res.json(donations);
-  } catch (error: any) {
-    console.error('שגיאה בשליפת התרומות:', error.message);
-    res.status(500).json({ message: 'נכשל בשליפת התרומות' });
-  }
-});
 //get all payments
 router.get("/nedarim/payments", async (req, res) => {
     try {
