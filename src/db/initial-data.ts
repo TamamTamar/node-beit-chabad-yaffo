@@ -20,7 +20,8 @@ export const donations =
       "LastName": "רוזנפלד",
       "Phone": "058-6827707",
       "Amount": 1000,
-      "Tashlumim": null
+      "Tashlumim": null,
+      "lizchut": "לזשק אדל ליבא בת אריאלה יפתח בן בן דקלה. חזרה בתשוב. רחל בת אריאלה."
     },
     {
       "FirstName": "לוי יצחק",
