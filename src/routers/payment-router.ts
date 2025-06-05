@@ -57,7 +57,7 @@ router.post("/nedarim/save", async (req, res) => {
         res.status(200).send("OK");
     } catch (error) {
         console.error("Error handling callback:", error);
-        res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error" + error);
     }
 });
 router.get('/donations', async (req, res) => {
