@@ -30,16 +30,17 @@ export const donations =
       "Tashlumim": 12
     },
     {
-      "FirstName": "משפחת נורני",
-      "LastName": "",
+      "FirstName": "משפחת ",
+      "LastName": "נורני",
       "Phone": "050-7971725",
       "Amount": 250,
       "Tashlumim": 12
     },
     {
-      "FirstName": "תמם",
-      "LastName": "",
-      "Phone": "",
+      "FirstName": "משפחת",
+      "LastName": "תמם",
+      "Phone": "054-2193770",
+
       "Amount": 1,
       "Tashlumim": null
     },
