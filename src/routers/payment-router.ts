@@ -3,6 +3,7 @@ import { Payment } from '../db/models/PaymentModel';
 import express from "express";
 import axios from 'axios';
 import { paymentService } from '../services/payment-service';
+import { PaymentType } from '../@types/chabad';
 
 const router = Router();
 
@@ -40,13 +41,13 @@ router.post("/payment-callback", express.urlencoded({ extended: true }), async (
 //save payment data to DB
 router.post("/nedarim/save", async (req, res) => {
     try {
-        const data = req.body;
+        const data = req.body as PaymentType;
         const newPaymentData = {
-            FirstName: data.ClientName.split(" ")[0],
-            LastName: data.ClientName.split(" ")[1] || "",
+            FirstName: data.FirstName.split(" ")[0],
+            LastName: data.LastName.split(" ")[1] || "",
             Phone: data.Phone,
-            Amount: parseFloat(data.Amount),
-            Tashlumim: parseInt(data.Tashloumim),
+            Amount: data.Amount,
+            Tashlumim:data.Tashlumim || 1, // אם אין תשלומים, נחשב כ-1
         };
 
         const payment = new Payment(newPaymentData);
