@@ -16,7 +16,6 @@ const connect = async () => {
   try {
     await mongoose.connect(connectionString);
 
-    await initDB(); // Initialize the database with initial data
 
 
     Logger.log("Database Connected");
