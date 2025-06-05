@@ -11,20 +11,8 @@ const initDB = async () => {
       Logger.log("1 or more donations already exist. Skipping donation initialization.");
     } else {
       for (let d of donations) {
-               const existingDonation = await Payment.findOne({
-          FirstName: d.FirstName,
-          LastName: d.LastName,
-          Phone: d.Phone
-        });
-        if (!existingDonation) {
-          const saved = await Payment.create(d);
-          Logger.verbose(`Donation created: ${saved.Phone}`);
-        } else {
-          // מחברים את ה-Amount הקיים עם ה-Amount החדש
-          existingDonation.Amount += d.Amount;
-          await existingDonation.save();
-          Logger.log(`Donation updated (Amount summed): ${existingDonation.Phone} - New Amount: ${existingDonation.Amount}`);
-        }
+        const saved = await Payment.create(d);
+        Logger.verbose(`Donation created: ${saved.Phone}`);
       }
     }
   } catch (e) {
