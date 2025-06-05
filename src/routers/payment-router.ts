@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { Payment } from '../db/models/PaymentModel';
 import express from "express";
 import axios from 'axios';
+import { paymentService } from '../services/payment-service';
 
 const router = Router();
 
@@ -60,20 +61,15 @@ router.post("/nedarim/save", async (req, res) => {
     }
 });
 router.get('/donations', async (req, res) => {
-    try {
-        const response = await axios.get('https://matara.pro/nedarimplus/Reports/Manage3.aspx', {
-            params: {
-                Action: 'GetHistoryJson',
-                MosadNumber: '7013920',
-                ApiPassword: 'fp203',
-            },
-        });
-        res.json(response.data); // שליחה ללקוח
-    } catch (error: any) {
-        console.error('Error fetching from nedarimplus:', error.message);
-        res.status(500).json({ message: 'Failed to fetch donation data' });
-    }
+  try {
+    const donations = await paymentService.fetchAndAggregateDonations();
+    res.json(donations);
+  } catch (error: any) {
+    console.error('שגיאה בשליפת התרומות:', error.message);
+    res.status(500).json({ message: 'נכשל בשליפת התרומות' });
+  }
 });
+
 
 
 export { router as paymentRouter };

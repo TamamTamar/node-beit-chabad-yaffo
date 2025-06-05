@@ -67,3 +67,20 @@ export interface prices {
     childPrice: number;
     couplePrice: number;
 }
+export type RawDonation = {
+  ClientName: string;
+  Amount: string;
+  TransactionType: string;
+  Groupe: string;
+  TransactionTime: string;
+  Tashloumim?: string;
+  FirstTashloum?: string;
+  NextTashloum?: string;
+};
+
+export type AggregatedDonation = {
+  name: string;
+  amount: number;
+  lizchut: string;
+  date: string;
+};
