@@ -20,12 +20,15 @@ connect()
 const app = express();
 // Redirect non-www to www
 app.use((req, res, next) => {
+  console.log('hostname is:', req.hostname); // נוסיף לוג
   if (req.hostname === 'chabadyafo.org') {
     const newUrl = `https://www.chabadyafo.org${req.originalUrl}`;
+    console.log('Redirecting to:', newUrl); // נוסיף גם את זה
     return res.redirect(301, newUrl);
   }
   next();
 });
+
 
 
 app.use(json());
