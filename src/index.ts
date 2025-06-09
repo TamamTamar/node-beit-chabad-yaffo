@@ -8,6 +8,7 @@ import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
 import { Logger } from './logs/logger'; // ייבוא מחלקת Logger
+import { redirectNonWww } from './middleware/redirectNonWww';
 
 // קוראים לפונקציה כדי לטעון את משתני הסביבה
 configDevEnv();
@@ -18,6 +19,9 @@ connect()
   .catch((err) => console.error(`Failed to connect to the database: ${err.message}`));
 
 const app = express();
+// Redirect non-www to www
+app.use(redirectNonWww);
+
 
 app.use(json());
 app.use(morgan("dev"));
