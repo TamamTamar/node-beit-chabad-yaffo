@@ -8,7 +8,6 @@ import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
 import { Logger } from './logs/logger'; // ייבוא מחלקת Logger
-import { redirectNonWww } from './middleware/redirectNonWww';
 
 // קוראים לפונקציה כדי לטעון את משתני הסביבה
 configDevEnv();
@@ -20,7 +19,13 @@ connect()
 
 const app = express();
 // Redirect non-www to www
-app.use(redirectNonWww);
+app.use((req, res, next) => {
+  if (req.hostname === 'chabadyafo.org') {
+    const newUrl = `https://www.chabadyafo.org${req.originalUrl}`;
+    return res.redirect(301, newUrl);
+  }
+  next();
+});
 
 
 app.use(json());
