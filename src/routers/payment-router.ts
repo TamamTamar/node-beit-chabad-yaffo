@@ -21,7 +21,9 @@ router.post("/payment-callback", express.json(), async (req, res) => {
             LastName: paymentData.ClientName.split(" ")[1] || "",
             Phone: paymentData.Phone,
             Amount: parseFloat(paymentData.Amount),
-            Tashlumim: parseInt(paymentData.Tashloumim || "1"), // ברירת מחדל 1 תשלום
+            Tashlumim: parseInt(paymentData.Tashloumim || "1"),
+            Comment: paymentData.Comment || "", // ברירת מחדל 1 
+            // תשלום
             // ניתן להוסיף שדות נוספים בהתאם לצורך
         };
 
