@@ -25,7 +25,7 @@ export const paymentService = {
 
 savePayment: async (data: PaymentDataToSave) => {
   // מחפשים תשלום קיים לפי הטלפון
-  const existingPayment = await Payment.findOne({ FirstName: data.FirstName, LastName: data.LastName, Phone: data.Phone });
+  const existingPayment = await Payment.findOne({ FirstName: data.FirstName, LastName: data.LastName, Phone: data.Phone, Comment: data.Comment });
 
   if (existingPayment) {
     // אם יש, מחברים את הסכום החדש לישן
@@ -44,6 +44,8 @@ savePayment: async (data: PaymentDataToSave) => {
       Phone: data.Phone,
       Amount: data.Amount,
       Tashlumim: data.Tashlumim || 1,
+      Comment: data.Comment,
+      
     };
 
     const payment = new Payment(newPaymentData);
