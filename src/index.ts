@@ -7,7 +7,6 @@ import notFound from './errors/not-found';
 import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
-import { Logger } from './logs/logger'; // ייבוא מחלקת Logger
 
 // קוראים לפונקציה כדי לטעון את משתני הסביבה
 configDevEnv();

@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { ShabbatService } from "../services/Shabbat-service";
-import RishumShabbat from "../db/models/ShabbatModel";
 import Price from "../db/models/PriceModel";
+import { ShabbatService } from "../services/Shabbat-service";
 
 const router = Router();
 
 //create new Rishum Shabbat
-router.post('/register', async (req, res) => {
+router.post('/new', async (req, res) => {
     try {
         const { parasha, date, totalPrice, name, people, phone } = req.body;
 

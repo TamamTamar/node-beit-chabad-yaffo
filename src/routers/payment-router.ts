@@ -1,9 +1,7 @@
-import { Router } from 'express';
+import express, { Router } from "express";
+import { PaymentDataToSave } from '../@types/chabad';
 import { Payment } from '../db/models/PaymentModel';
-import express from "express";
-import axios from 'axios';
 import { paymentService } from '../services/payment-service';
-import { PaymentDataToSave, PaymentInput } from '../@types/chabad';
 
 
 const router = Router();
@@ -16,15 +14,15 @@ router.post("/payment-callback", express.json(), async (req, res) => {
     // בדיקה אם יש Confirmation - נניח שזה מסמל תשלום מאושר
     if (paymentData.Confirmation) {
         // כאן אפשר לבצע שמירה במסד הנתונים
-        const newPaymentData = {
+        const newPaymentData: PaymentDataToSave = {
             FirstName: paymentData.ClientName.split(" ")[0],
             LastName: paymentData.ClientName.split(" ")[1] || "",
             Phone: paymentData.Phone,
             Amount: parseFloat(paymentData.Amount),
             Tashlumim: parseInt(paymentData.Tashloumim || "1"),
-            Comment: paymentData.Comment || "", // ברירת מחדל 1 
-            // תשלום
-            // ניתן להוסיף שדות נוספים בהתאם לצורך
+            Comment: paymentData.Comment, 
+         
+          
         };
 
         const payment = new Payment(newPaymentData);
