@@ -10,7 +10,7 @@ export const PaymentSchema = new mongoose.Schema<PaymentDataToSave>({
   Tashlumim: { type: Number, required: false, default: 12 }, // ברירת מחדל ל-1 אם לא נמסר
   createdAt: { type: Date, default: Date.now },
   lizchut: { type: String, required: false },
-  Comment: { type: String, required: false },
+  Comment: { type: String, required: true },
 }, {
   timestamps: true,
 

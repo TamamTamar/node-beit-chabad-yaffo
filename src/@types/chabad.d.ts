@@ -69,7 +69,7 @@ export interface PaymentDataToSave {
   Tashlumim: number;
   createdAt?: Date;
   lizchut?: string;
-  Comment?: string;
+  Comment: string;
 
 }
 

@@ -20,11 +20,11 @@ router.post("/payment-callback", express.json(), async (req, res) => {
             Phone: paymentData.Phone,
             Amount: parseFloat(paymentData.Amount),
             Tashlumim: parseInt(paymentData.Tashloumim || "1"),
-            Comment: paymentData.Comment, 
-         
-          
-        };
+            Comment: paymentData.Comment,
 
+
+        };
+        console.log("newPaymentData:", newPaymentData);
         const payment = new Payment(newPaymentData);
         await payment.save();
 
@@ -36,8 +36,8 @@ router.post("/payment-callback", express.json(), async (req, res) => {
     res.status(200).send("OK");
 });
 
-  
-  
+
+
 //save payment data to DB
 router.post("/nedarim/save", async (req, res) => {
     try {
