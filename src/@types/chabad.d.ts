@@ -70,6 +70,7 @@ export interface PaymentDataToSave {
   createdAt?: Date;
   lizchut?: string;
   Comment: string;
+  ref?: string; // reference extracted from comment
 
 }
 

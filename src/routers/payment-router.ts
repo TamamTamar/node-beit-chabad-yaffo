@@ -7,34 +7,41 @@ import { paymentService } from '../services/payment-service';
 const router = Router();
 
 router.post("/payment-callback", express.json(), async (req, res) => {
-    const paymentData = req.body;
+  const paymentData = req.body;
 
-    console.log("Callback data:", paymentData);
+  console.log("Callback data:", paymentData);
 
-    // בדיקה אם יש Confirmation - נניח שזה מסמל תשלום מאושר
-    if (paymentData.Confirmation) {
-        // כאן אפשר לבצע שמירה במסד הנתונים
-        const newPaymentData: PaymentDataToSave = {
-            FirstName: paymentData.ClientName.split(" ")[0],
-            LastName: paymentData.ClientName.split(" ")[1] || "",
-            Phone: paymentData.Phone,
-            Amount: parseFloat(paymentData.Amount),
-            Tashlumim: parseInt(paymentData.Tashloumim || "1"),
-            Comment: paymentData.Comment,
+  if (paymentData.Confirmation) {
+    const [firstName = "", lastName = ""] = (paymentData.ClientName || "").split(" ");
 
+    const newPaymentData: PaymentDataToSave = {
+      FirstName: firstName,
+      LastName: lastName,
+      Phone: paymentData.Phone,
+      Amount: parseFloat(paymentData.Amount),
+      Tashlumim: parseInt(paymentData.Tashloumim || "1"),
+      Comment: paymentData.Comment,
+      ref: extractRefFromComment(paymentData.Comment),
+      createdAt: new Date(), // במקום Date
+    };
 
-        };
-        console.log("newPaymentData:", newPaymentData);
-        const payment = new Payment(newPaymentData);
-        await payment.save();
+    console.log("newPaymentData:", newPaymentData);
 
-        console.log("✅ תשלום אושר ושמור במסד נתונים");
-    } else {
-        console.log("❌ עסקה זמנית או לא אושרה (אין מספר אישור)");
-    }
+    const payment = new Payment(newPaymentData);
+    await payment.save();
 
-    res.status(200).send("OK");
+    console.log("✅ תשלום אושר ושמור במסד נתונים");
+  } else {
+    console.log("❌ עסקה זמנית או לא אושרה (אין מספר אישור)");
+  }
+
+  res.status(200).send("OK");
 });
+
+function extractRefFromComment(comment?: string): string | null {
+  const match = comment?.match(/ref:\s?(\w+)/i);
+  return match?.[1] || null;
+}
 
 
 
