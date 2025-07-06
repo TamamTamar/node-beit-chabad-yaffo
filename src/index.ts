@@ -7,6 +7,7 @@ import notFound from './errors/not-found';
 import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
+import initPayments from './db/init-db';
 
 // קוראים לפונקציה כדי לטעון את משתני הסביבה
 configDevEnv();
@@ -15,6 +16,10 @@ console.log("Environment variables loaded successfully."); // לוג לטעינ�
 connect()
   .then(() => console.log("Connected to the database successfully."))
   .catch((err) => console.error(`Failed to connect to the database: ${err.message}`));
+
+  initPayments()
+  .then(() => console.log("Payments initialized successfully."))
+  .catch((err) => console.error(`Failed to initialize payments: ${err.message}`));
 
 const app = express();
 // Redirect non-www to www
