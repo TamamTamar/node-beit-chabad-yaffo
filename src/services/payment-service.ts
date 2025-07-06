@@ -44,7 +44,7 @@ savePayment: async (data: PaymentDataToSave) => {
       Phone: data.Phone,
       Amount: data.Amount,
       Tashlumim: data.Tashlumim || 1,
-      Comment: data.Comment,
+      Comment: data.Comments,
       
     };
 

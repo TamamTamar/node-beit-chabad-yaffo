@@ -20,8 +20,8 @@ router.post("/payment-callback", express.json(), async (req, res) => {
       Phone: paymentData.Phone,
       Amount: parseFloat(paymentData.Amount),
       Tashlumim: parseInt(paymentData.Tashloumim || "1"),
-      Comment: paymentData.Comment,
-      ref: extractRefFromComment(paymentData.Comment),
+      Comments: paymentData.Comments,
+      ref: extractRefFromComment(paymentData.Comments),
       createdAt: new Date(), // במקום Date
     };
 
@@ -38,8 +38,8 @@ router.post("/payment-callback", express.json(), async (req, res) => {
   res.status(200).send("OK");
 });
 
-function extractRefFromComment(comment?: string): string | null {
-  const match = comment?.match(/ref:\s?(\w+)/i);
+function extractRefFromComment(comments?: string): string | null {
+  const match = comments?.match(/ref:\s?(\w+)/i);
   return match?.[1] || null;
 }
 
@@ -72,6 +72,31 @@ router.get("/nedarim/payments", async (req, res) => {
         console.error("Error fetching payments:", error);
         res.status(500).json({ message: "Failed to fetch payments" });
     }
+});
+
+// Get donations grouped by ref
+router.get("/donations-by-ref", async (req, res) => {
+  try {
+    const result = await Payment.aggregate([
+      {
+        $group: {
+          _id: { $ifNull: ["$ref", "ללא מזהה"] },
+          totalAmount: { $sum: "$Amount" },
+          donationCount: { $sum: 1 }
+        }
+      },
+      { $sort: { totalAmount: -1 } } // אפשר גם לפי תרומות
+    ]);
+
+    res.json(result.map(item => ({
+      ref: item._id,
+      totalAmount: item.totalAmount,
+      donationCount: item.donationCount
+    })));
+  } catch (error) {
+    console.error("שגיאה בשליפת תרומות לפי ref:", error);
+    res.status(500).send("שגיאה בשרת");
+  }
 });
 
 
