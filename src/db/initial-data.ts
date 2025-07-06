@@ -1,4 +1,4 @@
-const payments = [
+export const payments = [
   {
     "FirstName": "יוכבד",
     "LastName": "תמם",

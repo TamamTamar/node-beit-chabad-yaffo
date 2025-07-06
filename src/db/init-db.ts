@@ -1,31 +1,35 @@
-
+import mongoose from "mongoose";
 import { Logger } from "../logs/logger";
+import { payments } from "./initial-data"; // הנתיב לקובץ שמכיל את המערך
 import { Payment } from "./models/PaymentModel";
 
-
-const initPayments = async () => {
+const importPayments = async () => {
   try {
+    await mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://...");
 
-    for (let payment of payments) {
-      const existing = await Payment.findOne({
-        FirstName: payment.FirstName,
-        LastName: payment.LastName,
-        Amount: payment.Amount,
-        createdAt: payment.createdAt,
+    for (const data of payments) {
+      const exists = await Payment.findOne({
+        FirstName: data.FirstName,
+        LastName: data.LastName,
+        Amount: data.Amount,
+        createdAt: data.createdAt,
       });
 
-      if (!existing) {
-        await Payment.create(payment);
-        Logger.verbose(`תרומה נשמרה: ${payment.FirstName} ${payment.LastName}`);
+      if (!exists) {
+        const payment = new Payment(data);
+        await payment.save();
+        Logger.verbose(`נשמרה תרומה של ${data.FirstName} ${data.LastName}`);
       } else {
-        Logger.log(`תרומה קיימת כבר: ${payment.FirstName} ${payment.LastName}`);
+        Logger.log(`התרומה של ${data.FirstName} כבר קיימת`);
       }
     }
 
-    Logger.log("✅ אתחול התרומות הושלם בהצלחה");
+    Logger.log("✅ כל התרומות נשמרו בהצלחה");
+    process.exit(0);
   } catch (e) {
-    Logger.error(`❌ שגיאה באתחול התרומות: ${e.message}`);
+    Logger.error(`❌ שגיאה בייבוא: ${e.message}`);
+    process.exit(1);
   }
 };
 
-export default initPayments;
+importPayments();
