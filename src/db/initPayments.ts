@@ -6,12 +6,12 @@ import { Payment } from "./models/PaymentModel";
 
 dotenv.config();
 
-const MONGO_URI ="mongodb+srv://chabadyaffo:oKVOSd9pfObHhNjB@chabad-yaffo.gcdz4we.mongodb.net/?retryWrites=true&w=majority&appName=chabad-yaffo";
+const MONGO_URI = process.env.DB_CONNECTION_STRING as string;
 
 const run = async () => {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log("✅ Connected to MongoDB");
+    console.log("✅ Connected to MongoDB + " + MONGO_URI);
 
     const count = await Payment.countDocuments();
     if (count > 0) {

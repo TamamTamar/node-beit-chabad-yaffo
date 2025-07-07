@@ -5,11 +5,11 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
     "build": "tsc",
+    "prestart": "npm run build",
     "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
     "init:payments": "tsx src/db/initPayments.ts"
-
   },
   "keywords": [],
   "author": "",
