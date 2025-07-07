@@ -70,7 +70,7 @@ router.get("/nedarim/payments", async (req, res) => {
         res.status(200).json(payments);
     } catch (error) {
         console.error("Error fetching payments:", error);
-        res.status(500).json({ message: "Failed to fetch payments" });
+        res.status(500).json({ message: "Failed to fetch payments" + error.message });
     }
 });
 
