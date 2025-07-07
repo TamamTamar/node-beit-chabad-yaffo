@@ -20,7 +20,7 @@ const connect = async () => {
 
     console.log("Database Connected" + connectionString);
   } catch (e) {
-    Logger.log("Database not connected");
+    Logger.log("Database not connected" + e + connectionString);
   }
 };
 
