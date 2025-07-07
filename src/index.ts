@@ -1,12 +1,13 @@
 import cors from 'cors';
 import express, { json } from "express";
 import morgan from 'morgan';
-import configDevEnv from '../config';
+
 import connect from './db/connection';
 import notFound from './errors/not-found';
 import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
+import configDevEnv from './config';
 
 
 // קוראים לפונקציה כדי לטעון את משתני הסביבה
