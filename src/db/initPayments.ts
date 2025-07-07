@@ -22,7 +22,7 @@ const run = async () => {
     const inserted = await Payment.insertMany(payments);
     console.log(`✅ Inserted ${inserted.length} payments`);
   } catch (error) {
-    console.error("❌ Error inserting payments:", error);
+    console.error("❌ Error insertig payments:", error);
   } finally {
     await mongoose.disconnect();
     process.exit();
