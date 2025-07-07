@@ -59,7 +59,7 @@ export interface PaymentInput {
   Comment?: string;
   CallBack?: string;
   CallBackMailError?: string;
-  createdAt?: Date;
+
 }
 export interface PaymentDataToSave {
   FirstName: string;
@@ -67,7 +67,6 @@ export interface PaymentDataToSave {
   Phone?: string;
   Amount: number;
   Tashlumim: number;
-  createdAt?: Date;
   lizchut?: string;
   Comments: string;
   ref?: string; // reference extracted from comment

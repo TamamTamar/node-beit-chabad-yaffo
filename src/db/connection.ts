@@ -18,7 +18,7 @@ const connect = async () => {
 
 
 
-    Logger.log("Database Connected");
+    console.log("Database Connected" + connectionString);
   } catch (e) {
     Logger.log("Database not connected");
   }

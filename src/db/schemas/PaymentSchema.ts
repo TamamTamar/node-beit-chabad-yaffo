@@ -11,6 +11,5 @@ export const PaymentSchema = new mongoose.Schema<PaymentDataToSave>({
   lizchut: { type: String },
   Comments: { type: String, required: true },
   ref: { type: String },
-  createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 

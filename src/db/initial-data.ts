@@ -6,9 +6,8 @@ export const payments = [
     "Amount": 180,
     "Tashlumim": 12,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:49.936Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "מענדי ודבורה לאה",
@@ -17,9 +16,8 @@ export const payments = [
     "Amount": 1000,
     "Tashlumim": 12,
     "lizchut": "לזשק אדל ליבא בת אריאלה יפתח בן בן דקלה. חזרה בתשוב. רחל בת אריאלה.",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:50.115Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "חפץ",
@@ -28,9 +26,8 @@ export const payments = [
     "Amount": 1000,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:50.467Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "בן",
@@ -39,9 +36,8 @@ export const payments = [
     "Amount": 180,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:51.169Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "ויץ",
@@ -50,9 +46,8 @@ export const payments = [
     "Amount": 130,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:51.343Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "ויטל",
@@ -61,9 +56,8 @@ export const payments = [
     "Amount": 100,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:51.516Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "מלונות",
@@ -72,9 +66,8 @@ export const payments = [
     "Amount": 140,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:51.691Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "חגית",
@@ -83,9 +76,8 @@ export const payments = [
     "Amount": 1200,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:51.864Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "Edoardo",
@@ -94,9 +86,8 @@ export const payments = [
     "Amount": 180,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:52.038Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "יוסף",
@@ -105,9 +96,8 @@ export const payments = [
     "Amount": 100,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:52.558Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "אמיר",
@@ -116,9 +106,8 @@ export const payments = [
     "Amount": 40,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-05T17:58:52.731Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "משפחת",
@@ -127,9 +116,8 @@ export const payments = [
     "Amount": 250,
     "Tashlumim": 12,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-08T07:37:57.018Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "אבי",
@@ -138,9 +126,8 @@ export const payments = [
     "Amount": 3,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-20T13:22:00.773Z"
+    "Comments": "תרומה",
+    "ref": ""
   },
   {
     "FirstName": "תמר",
@@ -149,8 +136,7 @@ export const payments = [
     "Amount": 1,
     "Tashlumim": 1,
     "lizchut": "",
-    "Comment": "תרומה",
-    "ref": "",
-    "createdAt": "2025-06-30T06:11:07.668Z"
-  }
+    "Comments": "תרומה",
+    "ref":""
+  },
 ]

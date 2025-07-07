@@ -22,7 +22,7 @@ router.post("/payment-callback", express.json(), async (req, res) => {
       Tashlumim: parseInt(paymentData.Tashloumim || "1"),
       Comments: paymentData.Comments,
       ref: extractRefFromComment(paymentData.Comments),
-      createdAt: new Date(), // במקום Date
+
     };
 
     console.log("newPaymentData:", newPaymentData);
