@@ -1,17 +1,3 @@
-# Node modules
-node_modules/
-
-# Output
-dist/
-
-# Environment variables (wherever they are)
-.env
-*.env
-src/config/*.env
-
-# Logs
-logs.txt
-*.log
-
-# OS stuff
-.DS_Store
+/config/prod.env
+/logs.txt
+/node_modules
