@@ -1,4 +1,4 @@
-import chalk from "chalk";
+
 import fs from 'fs';
 class Logger {
   private static isProd = () => process.env.NODE_ENV === "prod";
@@ -8,7 +8,7 @@ class Logger {
         fs.appendFile("logs.txt", message.toString() + "\n", ()=>{})
         return
     };
-    console.error(chalk.red(message));
+    console.error(message);
   }
 
   static log(message: any) {
@@ -16,7 +16,7 @@ class Logger {
       fs.appendFile("logs.txt", message.toString() + "\n", () => {});
       return;
     }
-    console.log(chalk.green(message));
+    console.log(message);
   }
 
    static verbose(message: any) {

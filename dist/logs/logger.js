@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = void 0;
-const chalk_1 = __importDefault(require("chalk"));
 const fs_1 = __importDefault(require("fs"));
 class Logger {
     static error(message) {
@@ -13,14 +12,14 @@ class Logger {
             return;
         }
         ;
-        console.error(chalk_1.default.red(message));
+        console.error(message);
     }
     static log(message) {
         if (this.isProd()) {
             fs_1.default.appendFile("logs.txt", message.toString() + "\n", () => { });
             return;
         }
-        console.log(chalk_1.default.green(message));
+        console.log(message);
     }
     static verbose(message) {
     }
