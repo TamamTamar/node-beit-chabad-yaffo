@@ -17,8 +17,6 @@ const connect = async () => {
     await mongoose.connect(connectionString);
 
 
-
-    console.log("Database Connected" + connectionString);
   } catch (e) {
     Logger.log("Database not connected" + e + connectionString);
   }

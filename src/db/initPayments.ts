@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 import { payments } from "./initial-data";
 import { Payment } from "./models/PaymentModel";
+import { Logger } from "../logs/logger";
 
 dotenv.config();
 
@@ -11,16 +12,16 @@ const MONGO_URI = process.env.DB_CONNECTION_STRING as string;
 const run = async () => {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log("✅ Connected to MongoDB + " + MONGO_URI);
+    Logger.log("✅ Connected to MongoDB + " + MONGO_URI);
 
     const count = await Payment.countDocuments();
     if (count > 0) {
-      console.log(`ℹ️ Skipping: ${count} payments already in DB`);
+      Logger.log(`ℹ️ Skipping: ${count} payments already in DB`);
       return;
     }
 
     const inserted = await Payment.insertMany(payments);
-    console.log(`✅ Inserted ${inserted.length} payments`);
+    Logger.log(`✅ Inserted ${inserted.length} payments`);
   } catch (error) {
     console.error("❌ Error insertig payments:", error);
   } finally {

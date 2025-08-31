@@ -7,6 +7,7 @@ import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
 import configDevEnv from './config';
+import { Logger } from './logs/logger';
 
 configDevEnv();
 connect();
@@ -87,5 +88,5 @@ app.use(errorHandler);   // error handler תמיד אחרון
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`✅ Server is running on :${PORT}`);
+  Logger.log(`✅ Server is running on :${PORT}`);
 });

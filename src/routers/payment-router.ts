@@ -9,7 +9,7 @@ const router = Router();
 router.post("/payment-callback", express.json(), async (req, res) => {
   const paymentData = req.body;
 
-  console.log("Callback data:", paymentData);
+  Logger.log("Callback data:", paymentData);
 
   if (paymentData.Confirmation) {
     const [firstName = "", lastName = ""] = (paymentData.ClientName || "").split(" ");
@@ -25,14 +25,14 @@ router.post("/payment-callback", express.json(), async (req, res) => {
 
     };
 
-    console.log("newPaymentData:", newPaymentData);
+    Logger.log("newPaymentData:", newPaymentData);
 
     const payment = new Payment(newPaymentData);
     await payment.save();
 
-    console.log("✅ תשלום אושר ושמור במסד נתונים");
+    Logger.log("✅ תשלום אושר ושמור במסד נתונים");
   } else {
-    console.log("❌ עסקה זמנית או לא אושרה (אין מספר אישור)");
+    Logger.log("❌ עסקה זמנית או לא אושרה (אין מספר אישור)");
   }
 
   res.status(200).send("OK");
@@ -47,31 +47,31 @@ function extractRefFromComment(comments?: string): string | null {
 
 //save payment data to DB
 router.post("/nedarim/save", async (req, res) => {
-    try {
-        const data = req.body as PaymentDataToSave;
-        const payment = await paymentService.savePayment(data);
+  try {
+    const data = req.body as PaymentDataToSave;
+    const payment = await paymentService.savePayment(data);
 
-        console.log("Payment data saved successfully:", payment);
+    Logger.log("Payment data saved successfully:", payment);
 
-        res.status(200).send("OK");
-    } catch (error) {
-        console.error("Error handling callback:", error);
-        res.status(500).send("Internal Server Error" + error);
-    }
+    res.status(200).send("OK");
+  } catch (error) {
+    console.error("Error handling callback:", error);
+    res.status(500).send("Internal Server Error" + error);
+  }
 });
 
 //get all payments
 router.get("/nedarim/payments", async (req, res) => {
-    try {
-        const payments = await Payment.find({});
-        if (!payments || payments.length === 0) {
-            return res.status(404).json({ message: "No payments found" });
-        }
-        res.status(200).json(payments);
-    } catch (error) {
-        console.error("Error fetching payments:", error);
-        res.status(500).json({ message: "Failed to fetch payments" + error.message });
+  try {
+    const payments = await Payment.find({});
+    if (!payments || payments.length === 0) {
+      return res.status(404).json({ message: "No payments found" });
     }
+    res.status(200).json(payments);
+  } catch (error) {
+    console.error("Error fetching payments:", error);
+    res.status(500).json({ message: "Failed to fetch payments" + error.message });
+  }
 });
 
 // Get donations grouped by ref
