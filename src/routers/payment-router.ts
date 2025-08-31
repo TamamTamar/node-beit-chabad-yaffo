@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import { PaymentDataToSave } from '../@types/chabad';
 import { Payment } from '../db/models/PaymentModel';
 import { paymentService } from '../services/payment-service';
+import { Logger } from "../logs/logger";
 
 
 const router = Router();
@@ -9,7 +10,7 @@ const router = Router();
 router.post("/payment-callback", express.json(), async (req, res) => {
   const paymentData = req.body;
 
-  Logger.log("Callback data:", paymentData);
+  Logger.log("Callback data:" + JSON.stringify(paymentData, null, 2));
 
   if (paymentData.Confirmation) {
     const [firstName = "", lastName = ""] = (paymentData.ClientName || "").split(" ");
@@ -25,7 +26,7 @@ router.post("/payment-callback", express.json(), async (req, res) => {
 
     };
 
-    Logger.log("newPaymentData:", newPaymentData);
+    Logger.log("newPaymentData:" + JSON.stringify(newPaymentData, null, 2));
 
     const payment = new Payment(newPaymentData);
     await payment.save();
@@ -51,7 +52,7 @@ router.post("/nedarim/save", async (req, res) => {
     const data = req.body as PaymentDataToSave;
     const payment = await paymentService.savePayment(data);
 
-    Logger.log("Payment data saved successfully:", payment);
+    Logger.log("Payment data saved successfully:" + JSON.stringify(payment, null, 2));
 
     res.status(200).send("OK");
   } catch (error) {
