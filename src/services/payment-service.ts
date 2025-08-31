@@ -1,12 +1,13 @@
 import axios from "axios";
 import { AggregatedDonation, PaymentDataToSave, RawDonation } from "../@types/chabad";
 import { Payment } from "../db/models/PaymentModel";
+import { Logger } from "../logs/logger";
 
 export const paymentService = {
   handleCallback: async (data: any) => {
 
     try {
-      Logger.log("Received callback from Nedarim Plus:", data);
+      Logger.log("Received callback from Nedarim Plus:" + JSON.stringify(data, null, 2));
 
       // כאן תוכל לבדוק את סטטוס העסקה ולעדכן את מסד הנתונים
       if (data.status === "SUCCESS") {
