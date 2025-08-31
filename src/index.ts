@@ -88,5 +88,5 @@ app.use(errorHandler);   // error handler תמיד אחרון
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  Logger.log(`✅ Server is running on :${PORT}`);
+  console.log(`✅ Server is running on :${PORT}`);
 });

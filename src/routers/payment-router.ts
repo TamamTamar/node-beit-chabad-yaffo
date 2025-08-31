@@ -10,7 +10,7 @@ const router = Router();
 router.post("/payment-callback", express.json(), async (req, res) => {
   const paymentData = req.body;
 
-  Logger.log("Callback data:" + JSON.stringify(paymentData, null, 2));
+  console.log("Callback data:" + JSON.stringify(paymentData, null, 2));
 
   if (paymentData.Confirmation) {
     const [firstName = "", lastName = ""] = (paymentData.ClientName || "").split(" ");
@@ -26,14 +26,14 @@ router.post("/payment-callback", express.json(), async (req, res) => {
 
     };
 
-    Logger.log("newPaymentData:" + JSON.stringify(newPaymentData, null, 2));
+    console.log("newPaymentData:" + JSON.stringify(newPaymentData, null, 2));
 
     const payment = new Payment(newPaymentData);
     await payment.save();
 
-    Logger.log("✅ תשלום אושר ושמור במסד נתונים");
+    console.log("✅ תשלום אושר ושמור במסד נתונים");
   } else {
-    Logger.log("❌ עסקה זמנית או לא אושרה (אין מספר אישור)");
+    console.log("❌ עסקה זמנית או לא אושרה (אין מספר אישור)");
   }
 
   res.status(200).send("OK");
@@ -52,7 +52,7 @@ router.post("/nedarim/save", async (req, res) => {
     const data = req.body as PaymentDataToSave;
     const payment = await paymentService.savePayment(data);
 
-    Logger.log("Payment data saved successfully:" + JSON.stringify(payment, null, 2));
+    console.log("Payment data saved successfully:" + JSON.stringify(payment, null, 2));
 
     res.status(200).send("OK");
   } catch (error) {

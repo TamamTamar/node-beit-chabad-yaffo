@@ -7,14 +7,14 @@ export const paymentService = {
   handleCallback: async (data: any) => {
 
     try {
-      Logger.log("Received callback from Nedarim Plus:" + JSON.stringify(data, null, 2));
+      console.log("Received callback from Nedarim Plus:" + JSON.stringify(data, null, 2));
 
       // כאן תוכל לבדוק את סטטוס העסקה ולעדכן את מסד הנתונים
       if (data.status === "SUCCESS") {
-        Logger.log(`Transaction ${data.transactionId} completed successfully.`);
+        console.log(`Transaction ${data.transactionId} completed successfully.`);
         // לדוגמה: עדכון מסד נתונים
       } else {
-        Logger.log(`Transaction ${data.transactionId} failed.`);
+        console.log(`Transaction ${data.transactionId} failed.`);
         // לדוגמה: שמירת סטטוס שגיאה
       }
     } catch (error) {

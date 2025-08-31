@@ -17,7 +17,7 @@ export const authService = {
   generateJWT: (payload: IJWTPayload) => {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      Logger.log("JWT_SECRET must be included in .env file");
+      console.log("JWT_SECRET must be included in .env file");
     }
     return jwt.sign(payload, secret);
   },
@@ -26,7 +26,7 @@ export const authService = {
   validateJWT: (token: string) => {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      Logger.log("JWT_SECRET must be included in .env file");
+      console.log("JWT_SECRET must be included in .env file");
     }
 
     const payload = jwt.verify(token, secret) as IJWTPayload;

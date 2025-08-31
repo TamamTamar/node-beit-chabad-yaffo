@@ -16,7 +16,7 @@ class Logger {
       fs.appendFile("logs.txt", message.toString() + "\n", () => { });
       return;
     }
-    Logger.log(message);
+    console.log(message);
   }
 
   static verbose(message: any) {

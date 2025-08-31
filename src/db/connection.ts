@@ -10,7 +10,7 @@ const connect = async () => {
 
   //check if the value exists
   if (!connectionString) {
-    Logger.log("DB_CONNECTION_STRING is not defined in your .env file");
+    console.log("DB_CONNECTION_STRING is not defined in your .env file");
     return;
   }
   try {
@@ -18,7 +18,7 @@ const connect = async () => {
 
 
   } catch (e) {
-    Logger.log("Database not connected" + e + connectionString);
+    console.log("Database not connected" + e + connectionString);
   }
 };
 
