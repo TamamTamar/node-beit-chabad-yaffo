@@ -1,5 +1,5 @@
-import cors from 'cors';
-import express, { json } from "express";
+import cors, { CorsOptionsDelegate } from 'cors';
+import express, { json } from 'express';
 import morgan from 'morgan';
 import connect from './db/connection';
 import notFound from './errors/not-found';
@@ -13,62 +13,79 @@ connect();
 
 const app = express();
 
-/** ✅ אם בקשות יגיעו עם Origin = chabadyafo.org (Netlify), נאשר אותן */
-const allowedOrigins = [
+// ---- רשימת Origins מותרים ----
+const ALLOWED_ORIGINS: (string | RegExp)[] = [
   'https://chabadyafo.org',
   'https://www.chabadyafo.org',
-  // אם יש לך דומיין Netlify קבוע – הוסיפי אותו כאן:
-  // 'https://chabadyafo-org.netlify.app',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  /\.netlify\.app$/,   // Netlify deploy previews
+  /\.netlify\.live$/,  // Netlify live previews
 ];
 
-function isAllowedOrigin(origin?: string | null) {
-  if (!origin) return true; // server-to-server / curl
-  if (allowedOrigins.includes(origin)) return true;
-  try {
-    const host = new URL(origin).hostname;
-    // לאשר Deploy Previews של Netlify
-    if (host.endsWith('.netlify.app') || host.endsWith('.netlify.live')) return true;
-  } catch {}
-  return false;
-}
+// ---- הגדרת CORS ----
+const corsOptions: CorsOptionsDelegate = (req, cb) => {
+  const origin = req.headers.origin as string | undefined;
 
-// ⛔️ שימי לב: ה-redirect הזה רלוונטי רק אם ה-Host הוא chabadyafo.org.
-// ב-Railway ה-Host הוא *.railway.app, אז זה לא ישפיע על ה-API.
+  // בקשה בלי Origin (curl / בריאות / שרת-לשרת) – נאשר
+  if (!origin) {
+    return cb(null, {
+      origin: true,
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      optionsSuccessStatus: 204,
+    });
+  }
+
+  const allowed = ALLOWED_ORIGINS.some(o =>
+    o instanceof RegExp ? o.test(origin) : o === origin
+  );
+
+  if (allowed) {
+    return cb(null, {
+      origin,  // נחזיר את ה-Origin עצמו (ולא true) – הכי נקי
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      optionsSuccessStatus: 204,
+    });
+  }
+
+  cb(new Error('Not allowed by CORS'));
+};
+
+// ✳️ CORS חייב להיות ראשון
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+app.use(json());
+app.use(morgan('dev'));
+
+// ---- redirect non-www→www ----
+// ❗ לא מפנים OPTIONS (preflight)
+// ❗ לא מפנים בקשות ל־/api
 app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') return next();
+  if (req.path.startsWith('/api')) return next();
   if (req.hostname === 'chabadyafo.org') {
     return res.redirect(301, `https://www.chabadyafo.org${req.originalUrl}`);
   }
   next();
 });
 
-/** ✅ CORS חייב להגיע לפני כל ראוט שמחזיר תשובה */
-app.use(cors({
-  origin(origin, cb) {
-    if (isAllowedOrigin(origin)) return cb(null, true);
-    return cb(new Error('Not allowed by CORS'));
-  },
-  credentials: true, // השאירי true רק אם את שולחת cookies/Authorization מהדפדפן
-  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization','X-Requested-With'],
-}));
-
-/** ✅ לטפל ב-preflight לכל הנתיבים */
-app.options('*', cors());
-
-app.use(json());
-app.use(morgan('dev'));
-
-/** ✅ ה-API שלך */
+// ---- ה־API שלך ----
 app.use('/api/payment', paymentRouter);
 app.use('/api/rishum', rishumRouter);
 
+// קבצים סטטיים אם צריך
 app.use(express.static('public'));
 
-/** ✅ מטפלי שגיאות אחרי הראוטים */
-app.use(errorHandler);
-app.use(notFound);
+// ---- מטפלי שגיאות ----
+app.use(notFound);       // 404 קודם
+app.use(errorHandler);   // error handler תמיד אחרון
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Server is running on :${PORT}`);
+  console.log(`✅ Server is running on :${PORT}`);
 });
