@@ -101,6 +101,7 @@ router.delete("/delete/:id", async (req, res, next) => {
     } catch (e) {
         next(e);
     }
+    
 });
 
 export { router as rishumRouter };

@@ -16,4 +16,5 @@ export const ShabbatService = {
     deleteRishumShabbat: async (id: string) => {
         return RishumShabbat.findByIdAndDelete(id);
     }
+    
 };
