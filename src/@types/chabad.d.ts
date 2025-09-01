@@ -96,3 +96,10 @@ export type AggregatedDonation = {
   lizchut: string;
   date: string;
 };
+export interface ISetting {
+  key: string;
+  value: string;        // ISO string
+  updatedBy?: string;
+  createdAt?: Date;     // ⬅️ חדש
+  updatedAt?: Date;     // ⬅️ חדש
+}

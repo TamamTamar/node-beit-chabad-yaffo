@@ -4,6 +4,7 @@ import { usersService } from "../services/users-service";
 import { isSelf } from "../middleware/is-self";
 import { validateLogin, validateUpdateUser, validateUser } from "../middleware/joi";
 import { isAdminOrSelf } from "../middleware/is-admin-or-self";
+import requireAdmin from "../middleware/requireAdmin";
 
 
 const router = Router();
@@ -28,7 +29,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 //get user by id
-router.get("/:id", isAdminOrSelf, async (req, res, next) => {
+router.get("/:id", requireAdmin, async (req, res, next) => {
   try {
     const userId = req.params.id;
     const user = await usersService.getUserById(userId);

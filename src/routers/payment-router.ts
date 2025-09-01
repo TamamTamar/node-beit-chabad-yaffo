@@ -3,6 +3,8 @@ import { PaymentDataToSave } from '../@types/chabad';
 import { Payment } from '../db/models/PaymentModel';
 import { paymentService } from '../services/payment-service';
 import { Logger } from "../logs/logger";
+import { settingsService } from "../services/settings-service";
+import { Donation } from "../db/models/donationModel";
 
 
 const router = Router();
@@ -100,6 +102,13 @@ router.get("/donations-by-ref", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res, next) => {
+  try {
+    const from = await settingsService.getDonationsStartDate();
+    const docs = await Donation.find({ createdAt: { $gte: from } }).sort({ createdAt: -1 });
+    res.json(docs);
+  } catch (e) { next(e); }
+});
 
 
 export { router as paymentRouter };

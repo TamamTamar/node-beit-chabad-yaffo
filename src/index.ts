@@ -9,6 +9,8 @@ import { rishumRouter } from './routers/rishum-router';
 import configDevEnv from '../config';
 import { Logger } from './logs/logger';
 import { usersRouter } from './routers/users-router';
+import { a } from '@react-spring/web';
+import { settingsRouter } from './routers/settings-router';
 
 console.log('🚀 configDevEnv imported:', typeof configDevEnv);
 
@@ -86,6 +88,7 @@ console.log('✅ Redirect middleware loaded');
 app.use('/api/payment', paymentRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/rishum', rishumRouter);
+app.use('/api/settings', settingsRouter);
 
 console.log('✅ Routers loaded');
 
