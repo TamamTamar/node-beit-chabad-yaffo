@@ -1,9 +1,8 @@
 // src/routers/settings-router.ts
 import { Router } from "express";
-import { settingsService } from "../services/settings-service";
-import { validateToken } from "../middleware/validate-token";
-import { isAdminOrSelf } from "../middleware/is-admin-or-self";
 import requireAdmin from "../middleware/requireAdmin";
+import { validateToken } from "../middleware/validate-token";
+import { settingsService } from "../services/settings-service";
 
 
 const router = Router();
