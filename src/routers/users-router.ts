@@ -18,6 +18,15 @@ router.put("/:id", ...isSelf, validateUpdateUser, async (req, res, next) => {
     next(e);
   }
 });
+//get all users
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await usersService.getAllUsers();
+    res.json(users);
+  } catch (e) {
+    next(e);
+  }
+});
 
 
 
