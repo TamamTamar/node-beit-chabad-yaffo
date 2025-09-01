@@ -21,7 +21,6 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
       unique: true,
-      index: true,
       lowercase: true,
       trim: true,
       // לא להגביל ל-max 30 — מיילים חוקיים לעתים ארוכים יותר
@@ -40,7 +39,5 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-// אינדקס ייחודי על אימייל — מבטיחי שהוא קיים
-userSchema.index({ email: 1 }, { unique: true });
 
 export default userSchema;
