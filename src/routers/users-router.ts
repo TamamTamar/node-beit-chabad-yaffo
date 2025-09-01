@@ -36,7 +36,7 @@ router.post("/login", validateLogin, async (req, res, next) => {
 });
 
 //create user
-router.post("/", validateUser, async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const result = await usersService.createUser(req.body);
     const { password, ...saved } = result.toJSON();
