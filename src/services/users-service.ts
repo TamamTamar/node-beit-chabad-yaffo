@@ -23,32 +23,25 @@ export const usersService = {
   },
 
 //login
-loginUser: async ({ email, password }: ILogin) => {
-  // המרת email לאותיות קטנות לפני החיפוש
-  email = email.toLowerCase();
-  
-  const user = await User.findOne({ email });
+  loginUser: async ({ email, password }: ILogin) => {
+    const normalizedEmail = (email || "").trim().toLowerCase();
+    const plain = (password || "").trim();
 
-  if (!user) {
-    throw new MyErrors(401, "Invalid email or password");
-  }
+    // שימי לב: חובה לטעון את הסיסמה למרות select:false
+    const user = await User.findOne({ email: normalizedEmail })
+      .select("+password"); // ← זה המפתח
 
-  //compare passwords
-  const isValid = await authService.comparePassword(password, user.password);
+    if (!user) throw new MyErrors(401, "Invalid email or password");
 
-  if (!isValid) {
-    throw new MyErrors(401, "Invalid email or password");
-  }
+    const ok = await authService.comparePassword(plain, (user as any).password);
+    if (!ok) throw new MyErrors(401, "Invalid email or password");
 
-  // generate JWT
-  const payload: IJWTPayload = {
-    _id: user._id.toString(),
-    isAdmin: user.isAdmin,
+    const payload: IJWTPayload = { _id: user._id.toString(), isAdmin: user.isAdmin };
+    const token = authService.generateJWT(payload);
 
-  };
+    return { token, user: { _id: user._id, email: user.email, isAdmin: user.isAdmin } };
+  },
 
-  return authService.generateJWT(payload);
-},
 
   //get all users
   getAllUsers: async () => User.find({}, { password: 0 }),
