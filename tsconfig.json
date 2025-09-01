@@ -1,13 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ES2016",
+    "target": "ES2020",
     "module": "CommonJS",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
+    "rootDir": ".", // ⬅️ שורש הפרויקט, לא רק src
+    "outDir": "dist",
     "strict": false,
-    "skipLibCheck": false
+    "esModuleInterop": true,
+    "skipLibCheck": false,
   },
-    "include": [
-      "src"
-    ]
+  "include": [
+    "src",
+    "config"
+  ], // ⬅️ שתי התיקיות שמכילות קוד
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
