@@ -27,6 +27,19 @@ router.get("/", async (req, res, next) => {
     next(e);
   }
 });
+//get user by id
+router.get("/:id", isAdminOrSelf, async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const user = await usersService.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (e) {
+    next(e);
+  }
+});
 
 
 
