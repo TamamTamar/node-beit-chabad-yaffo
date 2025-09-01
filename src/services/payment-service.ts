@@ -1,7 +1,5 @@
-import axios from "axios";
-import { AggregatedDonation, PaymentDataToSave, RawDonation } from "../@types/chabad";
+import { PaymentDataToSave } from "../@types/chabad";
 import { Payment } from "../db/models/PaymentModel";
-import { Logger } from "../logs/logger";
 
 export const paymentService = {
   handleCallback: async (data: any) => {

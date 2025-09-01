@@ -8,6 +8,7 @@ import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
 import configDevEnv from './config';
 import { Logger } from './logs/logger';
+import { usersRouter } from './routers/users-router';
 
 configDevEnv();
 connect();
@@ -77,6 +78,7 @@ app.use((req, res, next) => {
 
 // ---- ה־API שלך ----
 app.use('/api/payment', paymentRouter);
+app.use('/api/users', usersRouter);
 app.use('/api/rishum', rishumRouter);
 
 // קבצים סטטיים אם צריך
