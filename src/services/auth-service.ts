@@ -1,7 +1,6 @@
-import bcrypt, { compare } from "bcrypt";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { IJWTPayload } from "../@types/@types";
-import { Logger } from "../logs/logger";
 //security methods
 export const authService = {
   hashPassword: (plainTextPassword: string, rounds = 12) => {
