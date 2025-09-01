@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true, // מומלץ לשרתים
     "target": "ES2020",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "rootDir": ".", // ⬅️ שורש הפרויקט, לא רק src
+    "rootDir": ".",
     "outDir": "dist",
     "strict": false,
-    "esModuleInterop": true,
-    "skipLibCheck": false,
+    "esModuleInterop": true
   },
   "include": [
     "src",
     "config"
-  ], // ⬅️ שתי התיקיות שמכילות קוד
+  ],
   "exclude": [
     "node_modules",
     "dist"

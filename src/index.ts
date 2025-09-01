@@ -1,16 +1,14 @@
 import cors, { CorsOptionsDelegate } from 'cors';
 import express, { json } from 'express';
 import morgan from 'morgan';
+import configDevEnv from '../config';
 import connect from './db/connection';
 import notFound from './errors/not-found';
 import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
-import configDevEnv from '../config';
-import { Logger } from './logs/logger';
-import { usersRouter } from './routers/users-router';
-import { a } from '@react-spring/web';
 import { settingsRouter } from './routers/settings-router';
+import { usersRouter } from './routers/users-router';
 
 console.log('🚀 configDevEnv imported:', typeof configDevEnv);
 
