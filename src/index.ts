@@ -6,12 +6,17 @@ import notFound from './errors/not-found';
 import errorHandler from './middleware/error-handler';
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
-import configDevEnv from './config';
+import configDevEnv from '../config';
 import { Logger } from './logs/logger';
 import { usersRouter } from './routers/users-router';
 
+console.log('🚀 configDevEnv imported:', typeof configDevEnv);
+
 configDevEnv();
+console.log('✅ configDevEnv() called successfully');
+
 connect();
+console.log('✅ connect() called successfully');
 
 const app = express();
 
@@ -64,9 +69,8 @@ app.options('*', cors(corsOptions));
 app.use(json());
 app.use(morgan('dev'));
 
-// ---- redirect non-www→www ----
-// ❗ לא מפנים OPTIONS (preflight)
-// ❗ לא מפנים בקשות ל־/api
+console.log('✅ Middleware loaded');
+
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') return next();
   if (req.path.startsWith('/api')) return next();
@@ -76,17 +80,25 @@ app.use((req, res, next) => {
   next();
 });
 
+console.log('✅ Redirect middleware loaded');
+
 // ---- ה־API שלך ----
 app.use('/api/payment', paymentRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/rishum', rishumRouter);
 
+console.log('✅ Routers loaded');
+
 // קבצים סטטיים אם צריך
 app.use(express.static('public'));
+
+console.log('✅ Static files middleware loaded');
 
 // ---- מטפלי שגיאות ----
 app.use(notFound);       // 404 קודם
 app.use(errorHandler);   // error handler תמיד אחרון
+
+console.log('✅ Error handlers loaded');
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
