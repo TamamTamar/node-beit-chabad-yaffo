@@ -4,7 +4,8 @@ import { usersService } from "../services/users-service";
 import { isSelf } from "../middleware/is-self";
 import { validateLogin, validateUpdateUser, validateUser } from "../middleware/joi";
 import { isAdminOrSelf } from "../middleware/is-admin-or-self";
-import requireAdmin from "../middleware/requireAdmin";
+import { isAdmin } from "../middleware/is-admin";
+
 
 
 const router = Router();
@@ -29,7 +30,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 //get user by id
-router.get("/:id", requireAdmin, async (req, res, next) => {
+router.get("/:id", isAdmin, async (req, res, next) => {
   try {
     const userId = req.params.id;
     const user = await usersService.getUserById(userId);
@@ -59,7 +60,7 @@ router.post("/login", validateLogin, async (req, res, next) => {
 });
 
 //create user
-router.post("/",validateUser, async (req, res, next) => {
+router.post("/", validateUser, async (req, res, next) => {
   try {
     const result = await usersService.createUser(req.body);
     const { password, ...saved } = result.toJSON();
