@@ -1,40 +1,29 @@
-import cors, { CorsOptionsDelegate } from 'cors';
 import express, { json } from 'express';
+import cors, { CorsOptionsDelegate } from 'cors';
 import morgan from 'morgan';
+
 import configDevEnv from '../config';
 import connect from './db/connection';
 import notFound from './errors/not-found';
 import errorHandler from './middleware/error-handler';
+
 import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
 import { settingsRouter } from './routers/settings-router';
 import { usersRouter } from './routers/users-router';
 
-console.log('🚀 configDevEnv imported:', typeof configDevEnv);
-
 configDevEnv();
-console.log('✅ configDevEnv() called successfully');
 
-connect();
-console.log('✅ connect() called successfully');
-
-const app = express();
-
-// ---- רשימת Origins מותרים ----
 const ALLOWED_ORIGINS: (string | RegExp)[] = [
-  'https://chabadyafo.org',
-  'https://www.chabadyafo.org',
+  /^https:\/\/([a-z0-9-]+\.)*chabadyafo\.org$/i,
+  /\.netlify\.app$/i,
+  /\.netlify\.live$/i,
   'http://localhost:5173',
   'http://127.0.0.1:5173',
-  /\.netlify\.app$/,   // Netlify deploy previews
-  /\.netlify\.live$/,  // Netlify live previews
 ];
 
-// ---- הגדרת CORS ----
 const corsOptions: CorsOptionsDelegate = (req, cb) => {
   const origin = req.headers.origin as string | undefined;
-
-  // בקשה בלי Origin (curl / בריאות / שרת-לשרת) – נאשר
   if (!origin) {
     return cb(null, {
       origin: true,
@@ -44,64 +33,55 @@ const corsOptions: CorsOptionsDelegate = (req, cb) => {
       optionsSuccessStatus: 204,
     });
   }
-
-  const allowed = ALLOWED_ORIGINS.some(o =>
-    o instanceof RegExp ? o.test(origin) : o === origin
-  );
-
+  const allowed = ALLOWED_ORIGINS.some(o => o instanceof RegExp ? o.test(origin) : o === origin);
   if (allowed) {
     return cb(null, {
-      origin,  // נחזיר את ה-Origin עצמו (ולא true) – הכי נקי
+      origin,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
       optionsSuccessStatus: 204,
     });
   }
-
-  cb(new Error('Not allowed by CORS'));
+  return cb(new Error(`Not allowed by CORS: ${origin}`));
 };
 
-// ✳️ CORS חייב להיות ראשון
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+async function main() {
+  await connect();
 
-app.use(json());
-app.use(morgan('dev'));
+  const app = express();
 
-console.log('✅ Middleware loaded');
+  // CORS חייב להיות ראשון
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions));
 
-app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') return next();
-  if (req.path.startsWith('/api')) return next();
-  if (req.hostname === 'chabadyafo.org') {
-    return res.redirect(301, `https://www.chabadyafo.org${req.originalUrl}`);
-  }
-  next();
-});
+  app.use(json());
+  app.use(morgan('dev'));
 
-console.log('✅ Redirect middleware loaded');
+  // הפניה ל-www רק אם באמת צריך; אם לא – מחקי את כל הבלוק הזה
+  app.use((req, res, next) => {
+    if (req.method === 'OPTIONS' || req.path.startsWith('/api')) return next();
+    if (req.hostname === 'chabadyafo.org') {
+      return res.redirect(301, `https://www.chabadyafo.org${req.originalUrl}`);
+    }
+    next();
+  });
 
-// ---- ה־API שלך ----
-app.use('/api/payment', paymentRouter);
-app.use('/api/users', usersRouter);
-app.use('/api/rishum', rishumRouter);
-app.use('/api/settings', settingsRouter);
+  // API
+  app.use('/api/payment', paymentRouter);
+  app.use('/api/users', usersRouter);
+  app.use('/api/rishum', rishumRouter);
+  app.use('/api/settings', settingsRouter);
 
-console.log('✅ Routers loaded');
+  // Errors
+  app.use(notFound);
+  app.use(errorHandler);
 
-// קבצים סטטיים אם צריך
-app.use(express.static('public'));
+  const PORT = Number(process.env.PORT) || 8080;
+  app.listen(PORT, () => console.log(`Server listening on :${PORT}`));
+}
 
-console.log('✅ Static files middleware loaded');
-
-// ---- מטפלי שגיאות ----
-app.use(notFound);       // 404 קודם
-app.use(errorHandler);   // error handler תמיד אחרון
-
-console.log('✅ Error handlers loaded');
-
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on :${PORT}`);
+main().catch(err => {
+  console.error('Fatal startup error:', err);
+  process.exit(1);
 });
