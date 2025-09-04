@@ -9,7 +9,7 @@ import { isAdmin } from "../middleware/is-admin";
 const router = Router();
 
 // GET /api/settings/donations-start
-router.get("/donations-start",...isAdmin, async (req, res, next) => {
+router.get("/donations-start", async (req, res, next) => {
     try {
         const date = await settingsService.getDonationsStartDate();
         res.json({ value: date.toISOString() });
