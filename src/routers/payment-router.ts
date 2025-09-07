@@ -9,6 +9,7 @@ import { Donation } from "../db/models/donationModel";
 
 const router = Router();
 
+//handle payment gateway callback
 router.post("/payment-callback", express.json(), async (req, res) => {
   const paymentData = req.body;
 
@@ -41,7 +42,8 @@ router.post("/payment-callback", express.json(), async (req, res) => {
   res.status(200).send("OK");
 });
 
-function extractRefFromComment(comments?: string): string | null {
+// Extract ref from comments, e.g., "ref: XYZ123"
+const extractRefFromComment = (comments?: string): string | null => {
   const match = comments?.match(/ref:\s?(\w+)/i);
   return match?.[1] || null;
 }
@@ -102,6 +104,7 @@ router.get("/donations-by-ref", async (req, res) => {
   }
 });
 
+// Get all donations since the donations start date
 router.get("/", async (req, res, next) => {
   try {
     const from = await settingsService.getDonationsStartDate();
@@ -109,6 +112,21 @@ router.get("/", async (req, res, next) => {
     res.json(docs);
   } catch (e) { next(e); }
 });
+
+//get donation by ref
+router.get("/donations/:ref", async (req, res, next) => {
+  try {
+    const ref = req.params.ref;
+    const docs = await Donation.find({ ref }).sort({ createdAt: -1 });
+    if (!docs || docs.length === 0) {
+      return res.status(404).json({ message: "No donations found for this ref" });
+    }
+    res.json(docs);
+  } catch (e) { next(e); }
+});
+
+
+
 
 
 export { router as paymentRouter };
