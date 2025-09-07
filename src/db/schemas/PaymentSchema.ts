@@ -9,7 +9,7 @@ export const PaymentSchema = new mongoose.Schema<PaymentDataToSave>({
   Amount: { type: Number, required: true },
   Tashlumim: { type: Number, required: true },
   lizchut: { type: String },
-  Comments: { type: String, required: true },
+  Comments: { type: String, required: true, default: "", alias: "Comment" },
   ref: { type: String },
 }, { timestamps: true });
 

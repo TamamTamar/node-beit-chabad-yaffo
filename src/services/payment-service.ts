@@ -43,7 +43,7 @@ export const paymentService = {
         Phone: data.Phone,
         Amount: data.Amount,
         Tashlumim: data.Tashlumim || 1,
-        Comment: data.Comments,
+        Comments: data.Comments,
 
       };
 
