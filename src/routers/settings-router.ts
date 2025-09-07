@@ -21,8 +21,28 @@ router.put("/donations-start", ...isAdmin, async (req, res, next) => {
     try {
         const { value } = req.body as { value: string };
         const doc = await settingsService.setDonationsStartDate(value, req.payload?._id);
-        res.json({ key: doc.key, value: doc.value, updatedBy: doc.updatedBy, updatedAt: doc.updatedAt });
+        res.json({ key: doc.key, value: doc.value, updatedAt: doc.updatedAt });
     } catch (e) { next(e); }
 });
+
+//put goal for ref
+router.put("/goal/:ref", ...isAdmin, async (req, res, next) => {
+    try {
+        const ref = req.params.ref;
+        const { goal } = req.body as { goal: number | string };
+        const doc = await settingsService.setRefGoal(ref, goal, req.payload?._id);
+        res.json({ key: doc.key, value: doc.value, updatedAt: doc.updatedAt });
+    } catch (e) { next(e); }
+});
+ //get goal for ref
+router.get("/goal/:ref", async (req, res, next) => {
+    try {
+        const ref = req.params.ref;
+        const goal = await settingsService.getRefGoal(ref);
+        res.json({ ref, goal });
+    } catch (e) { next(e); }
+});
+
+
 
 export { router as settingsRouter };
