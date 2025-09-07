@@ -42,6 +42,13 @@ router.get("/goal/:ref", async (req, res, next) => {
         res.json({ ref, goal });
     } catch (e) { next(e); }
 });
+//get all goals
+router.get("/goals", async (req, res, next) => {
+    try {
+        const goals = await settingsService.getAllRefGoals();
+        res.json(goals);
+    } catch (e) { next(e); }
+});
 
 
 
