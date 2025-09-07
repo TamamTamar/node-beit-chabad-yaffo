@@ -117,7 +117,7 @@ router.get("/", async (req, res, next) => {
 router.get("/donations/:ref", async (req, res, next) => {
   try {
     const ref = req.params.ref;
-    const docs = await Donation.find({ ref }).sort({ createdAt: -1 });
+    const docs = await Payment.find({ ref }).sort({ createdAt: -1 });
     if (!docs || docs.length === 0) {
       return res.status(404).json({ message: "No donations found for this ref" });
     }
