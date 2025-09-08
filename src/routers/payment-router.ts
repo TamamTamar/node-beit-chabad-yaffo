@@ -59,8 +59,8 @@ router.post("/nedarim/save", async (req: Request, res: Response) => {
     res.status(500).send("Internal Server Error");
   }
 });
-//
-router.get("/payments", async (req: Request, res: Response) => {
+//get payments with filters
+router.get("/all", async (req: Request, res: Response) => {
   try {
     const { ref, ci = "false", from, to, limit = "50", skip = "0" } = req.query as Record<string, string | undefined>;
 
