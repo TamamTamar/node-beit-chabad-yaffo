@@ -28,7 +28,7 @@ export const paymentService = {
 
     if (existingPayment) {
       // אם יש, מחברים את הסכום החדש לישן
-      existingPayment.Amount += data.Amount;
+      existingPayment.Amount += data.Amount * data.Tashlumim;
       // אפשר לעדכן גם את Tashlumim אם תרצה, או להשאיר אותו כפי שהוא
       if (data.Tashlumim) {
         existingPayment.Tashlumim = data.Tashlumim;
@@ -41,7 +41,7 @@ export const paymentService = {
         FirstName: data.FirstName,
         LastName: data.LastName,
         Phone: data.Phone,
-        Amount: data.Amount,
+        Amount: data.Amount * data.Tashlumim, // סכום כולל לפי מספר התשלומים
         Tashlumim: data.Tashlumim || 1,
         Comments: data.Comments,
 
