@@ -100,7 +100,7 @@ router.get("/all", async (req: Request, res: Response) => {
  *    GET /api/payment/payments/summary/by-ref?from=2025-07-01&to=2025-09-30
  *    מייצר ref מאוחד case-insensitive
  */
-router.get("/payments/by-ref", async (req: Request, res: Response) => {
+router.get("/by-ref", async (req: Request, res: Response) => {
   try {
     const { from, to } = req.query as Record<string, string | undefined>;
     const match: any = {};
@@ -138,7 +138,7 @@ router.get("/payments/by-ref", async (req: Request, res: Response) => {
 });
 
 //get dontion by ref
-router.get("/payments/by-ref/:ref", async (req: Request, res: Response) => {
+router.get("/by-ref/:ref", async (req: Request, res: Response) => {
   try {
     const ref = req.params.ref;
     if (!ref || !ref.trim()) {
