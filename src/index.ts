@@ -11,6 +11,7 @@ import { paymentRouter } from './routers/payment-router';
 import { rishumRouter } from './routers/rishum-router';
 import { settingsRouter } from './routers/settings-router';
 import { usersRouter } from './routers/users-router';
+import { bitRouter } from './routers/bit-router';
 
 configDevEnv();
 
@@ -72,6 +73,7 @@ async function main() {
   app.use('/api/users', usersRouter);
   app.use('/api/rishum', rishumRouter);
   app.use('/api/settings', settingsRouter);
+  app.use("/api/bit", bitRouter);
 
   // Errors
   app.use(notFound);

@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import { PaymentDataToSave } from '../@types/chabad';
 import { Payment } from '../db/models/PaymentModel';
 import { paymentService } from '../services/payment-service';
+import { BitService } from "../services/bit-service";
 
 
 
@@ -166,7 +167,17 @@ router.get("/donations/:ref", async (req, res, next) => {
     return res.json(docs);
   } catch (e) { next(e); }
 });
+router.get("/status", async (req, res) => {
+  try {
+    const m = String(req.query.m || "");
+    if (!m) return res.status(400).json({ error: "Missing m" });
 
+    const data = await BitService.getStatus(m);
+    res.json(data); // { status: "pending"|"paid"|"error", amount? }
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Failed" });
+  }
+});
 
 
 
