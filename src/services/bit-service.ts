@@ -1,6 +1,6 @@
 import axios from "axios";
 import qs from "qs";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 import { CreateBitInput, NedarimBitCreatePayload, BitCallbackPayload } from "../@types/bit";
 import BitPayment from "../db/models/BitPayment";
 
@@ -30,7 +30,7 @@ export const BitService = {
             throw new Error("Amount must be > 0");
         }
 
-        const param2 = `bit_${uuid()}`;
+        const param2 = `bit_${randomUUID()}`; // מזהה ייחודי לעסקה
         await BitPayment.create({
             param2,
             status: "pending",
