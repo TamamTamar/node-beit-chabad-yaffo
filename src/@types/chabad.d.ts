@@ -71,7 +71,7 @@ export interface PaymentDataToSave {
   lizchut?: string;
   Comments?: string;          // נשמר תחת Comments (עם alias ל-Comment)
   ref?: string;
-  DisplayAsAnonymous?: boolean;
+
 
 }
 
