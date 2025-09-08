@@ -7,72 +7,76 @@ import { paymentService } from '../services/payment-service';
 
 const router = Router();
 
-//handle payment gateway callback
+
 // handle payment gateway callback
 router.post("/payment-callback", express.json(), async (req, res) => {
   try {
-    const b = req.body || {};
+    const b = req.body ?? {};
     console.log("Callback data:", JSON.stringify(b, null, 2));
 
     const statusOk = b.Status === "OK";
-    const months = parseInt(String(b.Month ?? "0"), 10) || 0;
-    const authorisation = String(b.AuthorisationNumber || "");
+    const months = Number.parseInt(String(b.Month ?? "0"), 10) || 0;
+    const authorisation = String(b.AuthorisationNumber ?? "");
+    const transactionType = String(b.TransactionType ?? "");
+    const isHK = /הקמ/.test(transactionType) || months >= 2;
 
-    // זיהוי HK: טקסט ההקמה או יותר מחודש אחד
-    const isHK =
-      (typeof b.TransactionType === "string" && b.TransactionType.includes("הקמת")) ||
-      months >= 2;
+    const amountRaw = Number.parseFloat(String(b.Amount ?? "0")) || 0;
 
-    // מיפוי תשלומים (ב-Ragil ייתכן ששדה יגיע כ-Tashlumim/‏Tashloumim)
-    const tashlumim =
-      isHK
-        ? 1
-        : parseInt(String(b.Tashlumim ?? b.Tashloumim ?? 1), 10) || 1;
-
-    // סכום: ב-HK זה חודשי; ב-Ragil זה סכום כל העסקה
-    const amount = parseFloat(String(b.Amount ?? "0")) || 0;
-
-    // פיצול שם (יעבוד טוב גם בעברית עם רווח אחד)
-    const [firstName = "", lastName = ""] = String(b.ClientName || "").split(" ");
+    // שם לקוח – פיצול יציב
+    const parts = String(b.ClientName ?? "").trim().split(/\s+/);
+    const firstName = parts.shift() ?? "";
+    const lastName = parts.join(" ");
 
     // סטטוס פנימי
     let resultStatus: "HK_SETUP_OK" | "CHARGE_OK" | "DECLINED";
     if (!statusOk) {
       resultStatus = "DECLINED";
     } else if (isHK) {
-      // בהקמת הוראת קבע אין מספר אישור עדיין — זה תקין
-      resultStatus = "HK_SETUP_OK";
+      resultStatus = "HK_SETUP_OK"; // בהקמה אין אישור סליקה עדיין
     } else {
-      // עסקה רגילה: חייב להיות AuthorisationNumber כדי לאשר גבייה
       resultStatus = authorisation ? "CHARGE_OK" : "DECLINED";
     }
+
+    // מיפוי לשדות השמירה:
+    // HK: Amount = חודשי, Tashlumim = מספר חודשים
+    // Ragil: Amount = כולל, Tashlumim = מתיבת הספק (אם קיימת)
+    const tashlumimRagil =
+      Number.parseInt(String(b.Tashlumim ?? b.Tashloumim ?? 1), 10) || 1;
+
+    const amountToSave = amountRaw;
+    const tashlumimToSave = isHK ? (months || 1) : tashlumimRagil;
 
     const doc: PaymentDataToSave = {
       FirstName: firstName,
       LastName: lastName,
-      Phone: b.Phone || "",
-      Amount: amount,
-      Tashlumim: tashlumim,
-      lizchut: undefined,
-      Comments: b.Comments || "",
-      ref: extractRefFromComment(b.Comments),
+      Phone: String(b.Phone ?? ""),
+      Amount: amountToSave,     // ב-HK זה חודשי, ברגיל זה כולל
+      Tashlumim: tashlumimToSave,
+      lizchut: "",
+      Comments: String(b.Comments ?? ""),
+      ref: extractRefFromComment(String(b.Comments ?? "")),
     };
 
-    // שמירה / עדכון במסד (לפי הצורך שלך)
-    // למשל: אם את רוצה לשמור גם raw/סטטוסים נפרדים, עשי מודל נוסף
+    // (אופציונלי) אם יש לך שדות נוספים בסכמה, מומלץ לשמור מידע עוזר:
+    // doc.IsHK = isHK;
+    // doc.HKTotalPlanned = isHK ? amountRaw * tashlumimToSave : undefined;
+    // doc.NextDate = b.NextDate; // "08/09/2025" - לשקול פרסינג ל-ISO
+    // doc.ExternalId = b.ID;     // "1910386" - למניעת כפילויות
+
     const payment = new Payment(doc);
     await payment.save();
 
     console.log(
-      `✅ callback processed: mode=${isHK ? "HK" : "Ragil"}, status=${resultStatus}`
+      `✅ processed: ${isHK ? "HK (setup)" : "Ragil"}, monthly=${isHK ? amountRaw : "-"}, months=${isHK ? tashlumimToSave : "-"}, status=${resultStatus}`
     );
     res.status(200).send("OK");
   } catch (err) {
     console.error("❌ payment-callback error:", err);
-    // עדיין 200 כדי למנוע ניסיונות חוזרים אינסופיים מהספק
+    // אם הספק דורש תמיד 200 - השאירי כך
     res.status(200).send("OK");
   }
 });
+
 
 // Extract ref from comments, e.g., "ref: XYZ123"
 const extractRefFromComment = (comments?: string): string | null => {
@@ -161,4 +165,3 @@ router.get("/donations/:ref", async (req, res, next) => {
 
 
 export { router as paymentRouter };
-  
