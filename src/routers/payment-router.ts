@@ -104,17 +104,23 @@ router.get("/donations-by-ref", async (req, res) => {
 
 
 
-//get donation by ref
+// server: payment-router.ts
 router.get("/donations/:ref", async (req, res, next) => {
   try {
-    const ref = req.params.ref;
-    const docs = await Payment.find({ ref }).sort({ createdAt: -1 });
-    if (!docs || docs.length === 0) {
-      return res.status(404).json({ message: "No donations found for this ref" });
-    }
-    res.json(docs);
+    const ref = String(req.params.ref || "").trim();
+
+    // חיפוש case-insensitive כדי לתמוך ב-DL/dl/Dl וכו'
+    const esc = ref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const docs = await Payment
+      .find({ ref: new RegExp(`^${esc}$`, "i") })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // תמיד מחזירים 200 עם מערך (גם אם ריק)
+    return res.json(docs);
   } catch (e) { next(e); }
 });
+
 
 
 
