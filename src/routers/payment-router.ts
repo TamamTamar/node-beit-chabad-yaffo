@@ -101,19 +101,27 @@ router.post("/nedarim/save", async (req, res) => {
   }
 });
 
-//get all payments
+//get all payments (public view)
 router.get("/nedarim/payments", async (req, res) => {
   try {
-    const payments = await Payment.find({});
+    const payments = await Payment.find({})
+      .sort({ createdAt: -1 })
+      .lean({ virtuals: true }); // מוסיף את ה־virtual PublicName
+
     if (!payments || payments.length === 0) {
       return res.status(404).json({ message: "No payments found" });
     }
-    res.status(200).json(payments);
+
+    return res.json(payments);
   } catch (error) {
     console.error("Error fetching payments:", error);
-    res.status(500).json({ message: "Failed to fetch payments" + error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch payments: " + error.message });
   }
 });
+
+
 
 // Get donations grouped by ref
 router.get("/donations-by-ref", async (req, res) => {

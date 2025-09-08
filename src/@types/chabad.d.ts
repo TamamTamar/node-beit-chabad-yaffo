@@ -65,11 +65,13 @@ export interface PaymentDataToSave {
   FirstName: string;
   LastName: string;
   Phone?: string;
+  Mail?: string;              // אם תרצי לשמור אימייל (לא חובה)
   Amount: number;
   Tashlumim: number;
   lizchut?: string;
-  Comments: string;
-  ref?: string; // reference extracted from comment
+  Comments?: string;          // נשמר תחת Comments (עם alias ל-Comment)
+  ref?: string;
+  DisplayAsAnonymous?: boolean;
 
 }
 
