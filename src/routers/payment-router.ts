@@ -8,43 +8,77 @@ import { paymentService } from '../services/payment-service';
 const router = Router();
 
 //handle payment gateway callback
+// handle payment gateway callback
 router.post("/payment-callback", express.json(), async (req, res) => {
-  const paymentData = req.body;
+  try {
+    const b = req.body || {};
+    console.log("Callback data:", JSON.stringify(b, null, 2));
 
-  console.log("Callback data:" + JSON.stringify(paymentData, null, 2));
+    const statusOk = b.Status === "OK";
+    const months = parseInt(String(b.Month ?? "0"), 10) || 0;
+    const authorisation = String(b.AuthorisationNumber || "");
 
-  if (paymentData.Confirmation) {
-    const [firstName = "", lastName = ""] = (paymentData.ClientName || "").split(" ");
+    // זיהוי HK: טקסט ההקמה או יותר מחודש אחד
+    const isHK =
+      (typeof b.TransactionType === "string" && b.TransactionType.includes("הקמת")) ||
+      months >= 2;
 
-    const newPaymentData: PaymentDataToSave = {
+    // מיפוי תשלומים (ב-Ragil ייתכן ששדה יגיע כ-Tashlumim/‏Tashloumim)
+    const tashlumim =
+      isHK
+        ? 1
+        : parseInt(String(b.Tashlumim ?? b.Tashloumim ?? 1), 10) || 1;
+
+    // סכום: ב-HK זה חודשי; ב-Ragil זה סכום כל העסקה
+    const amount = parseFloat(String(b.Amount ?? "0")) || 0;
+
+    // פיצול שם (יעבוד טוב גם בעברית עם רווח אחד)
+    const [firstName = "", lastName = ""] = String(b.ClientName || "").split(" ");
+
+    // סטטוס פנימי
+    let resultStatus: "HK_SETUP_OK" | "CHARGE_OK" | "DECLINED";
+    if (!statusOk) {
+      resultStatus = "DECLINED";
+    } else if (isHK) {
+      // בהקמת הוראת קבע אין מספר אישור עדיין — זה תקין
+      resultStatus = "HK_SETUP_OK";
+    } else {
+      // עסקה רגילה: חייב להיות AuthorisationNumber כדי לאשר גבייה
+      resultStatus = authorisation ? "CHARGE_OK" : "DECLINED";
+    }
+
+    const doc: PaymentDataToSave = {
       FirstName: firstName,
       LastName: lastName,
-      Phone: paymentData.Phone,
-      Amount: parseFloat(paymentData.Amount),
-      Tashlumim: parseInt(paymentData.Tashloumim || "1"),
-      Comments: paymentData.Comments,
-      ref: extractRefFromComment(paymentData.Comments),
-
+      Phone: b.Phone || "",
+      Amount: amount,
+      Tashlumim: tashlumim,
+      lizchut: undefined,
+      Comments: b.Comments || "",
+      ref: extractRefFromComment(b.Comments),
     };
 
-    console.log("newPaymentData:" + JSON.stringify(newPaymentData, null, 2));
-
-    const payment = new Payment(newPaymentData);
+    // שמירה / עדכון במסד (לפי הצורך שלך)
+    // למשל: אם את רוצה לשמור גם raw/סטטוסים נפרדים, עשי מודל נוסף
+    const payment = new Payment(doc);
     await payment.save();
 
-    console.log("✅ תשלום אושר ושמור במסד נתונים");
-  } else {
-    console.log("❌ עסקה זמנית או לא אושרה (אין מספר אישור)");
+    console.log(
+      `✅ callback processed: mode=${isHK ? "HK" : "Ragil"}, status=${resultStatus}`
+    );
+    res.status(200).send("OK");
+  } catch (err) {
+    console.error("❌ payment-callback error:", err);
+    // עדיין 200 כדי למנוע ניסיונות חוזרים אינסופיים מהספק
+    res.status(200).send("OK");
   }
-
-  res.status(200).send("OK");
 });
 
 // Extract ref from comments, e.g., "ref: XYZ123"
 const extractRefFromComment = (comments?: string): string | null => {
   const match = comments?.match(/ref:\s?(\w+)/i);
   return match?.[1] || null;
-}
+};
 
 
 
