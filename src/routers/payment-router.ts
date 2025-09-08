@@ -64,7 +64,7 @@ router.post("/nedarim/save", async (req, res) => {
 });
 
 //get all payments
-router.get("/all", async (req, res) => {
+router.get("/nedarim/payments", async (req, res) => {
   try {
     const payments = await Payment.find({});
     if (!payments || payments.length === 0) {
