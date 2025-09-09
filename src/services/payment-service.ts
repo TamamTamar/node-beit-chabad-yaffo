@@ -1,3 +1,4 @@
+import { ref } from "joi";
 import { PaymentDataToSave } from "../@types/chabad";
 import { Payment } from "../db/models/PaymentModel";
 
@@ -24,7 +25,7 @@ export const paymentService = {
 
   savePayment: async (data: PaymentDataToSave) => {
     // מחפשים תשלום קיים לפי הטלפון
-    const existingPayment = await Payment.findOne({ FirstName: data.FirstName, LastName: data.LastName, Phone: data.Phone });
+    const existingPayment = await Payment.findOne({ FirstName: data.FirstName, LastName: data.LastName, Phone: data.Phone, ref: data.ref, lizchut: data.lizchut });
 
     if (existingPayment) {
       // אם יש, מחברים את הסכום החדש לישן
@@ -41,9 +42,11 @@ export const paymentService = {
         FirstName: data.FirstName,
         LastName: data.LastName,
         Phone: data.Phone,
-        Amount: data.Amount * data.Tashlumim, // סכום כולל לפי מספר התשלומים
+        Amount: data.Amount , // סכום כולל לפי מספר התשלומים
         Tashlumim: data.Tashlumim || 1,
         Comments: data.Comments,
+        ref: data.ref,
+        lizchut: data.lizchut,
 
       };
 
