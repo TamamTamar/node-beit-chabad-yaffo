@@ -124,30 +124,46 @@ router.get("/nedarim/payments", async (req, res) => {
 
 
 
-// Get donations grouped by ref
 router.get("/donations-by-ref", async (req, res) => {
   try {
     const result = await Payment.aggregate([
+      // מחשבים סכום שורה: Amount * Tashlumim (ברירת מחדל 1)
+      {
+        $project: {
+          ref: { $ifNull: ["$ref", "ללא מזהה"] },
+          totalLine: {
+            $multiply: [
+              { $toDouble: { $ifNull: ["$Amount", 0] } },
+              { $toInt: { $ifNull: ["$Tashlumim", 1] } }
+            ]
+          }
+        }
+      },
+      // אגרגציה לפי ref
       {
         $group: {
-          _id: { $ifNull: ["$ref", "ללא מזהה"] },
-          totalAmount: { $sum: "$Amount" },
+          _id: "$ref",
+          totalAmount: { $sum: "$totalLine" },
           donationCount: { $sum: 1 }
         }
       },
-      { $sort: { totalAmount: -1 } } // אפשר גם לפי תרומות
+      { $sort: { totalAmount: -1 } }
     ]);
 
-    res.json(result.map(item => ({
-      ref: item._id,
-      totalAmount: item.totalAmount,
-      donationCount: item.donationCount
-    })));
+    res.json(
+      result.map(item => ({
+        ref: item._id,
+        totalAmount: item.totalAmount,
+        donationCount: item.donationCount
+      }))
+    );
   } catch (error) {
     console.error("שגיאה בשליפת תרומות לפי ref:", error);
     res.status(500).send("שגיאה בשרת");
   }
 });
+
+
 
 
 
