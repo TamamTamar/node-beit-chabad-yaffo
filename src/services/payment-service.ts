@@ -48,6 +48,7 @@ export const paymentService = {
         Phone: data.Phone,
         Mail: data.Mail,
         IsHK: data.IsHK,
+        ref: data.ref,
 
       };
 
