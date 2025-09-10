@@ -9,74 +9,123 @@ import { BitService } from "../services/bit-service";
 const router = Router();
 
 
-// handle payment gateway callback
+// handle payment gateway callback (Nedarim+)
 router.post("/payment-callback", express.json(), async (req, res) => {
   try {
     const b = req.body ?? {};
     console.log("Callback data:", JSON.stringify(b, null, 2));
 
-    const statusOk = b.Status === "OK";
-    const months = Number.parseInt(String(b.Month ?? "0"), 10) || 0;
-    const authorisation = String(b.AuthorisationNumber ?? "");
-    const transactionType = String(b.TransactionType ?? "");
-    const isHK = /הקמ/.test(transactionType) || months >= 2;
+    // --- עזרי פרסינג ---
+    const toNum = (v: unknown): number => {
+      const n = Number.parseFloat(String(v ?? "").replace(/[^\d.-]/g, ""));
+      return Number.isFinite(n) ? n : 0;
+    };
+    const toInt = (v: unknown): number => {
+      const n = Number.parseInt(String(v ?? "").replace(/[^\d-]/g, ""), 10);
+      return Number.isFinite(n) ? n : 0;
+    };
 
-    const amountRaw = Number.parseFloat(String(b.Amount ?? "0")) || 0;
+    // --- קריאת שדות מה-callback ---
+    const statusOk = String(b.Status ?? "").trim().toUpperCase() === "OK";
 
-    // שם לקוח – פיצול יציב
+    // שימי לב: אצלך ב-logs מגיע Confirmation (לא AuthorisationNumber)
+    const authorisation =
+      String(b.AuthorisationNumber ?? b.Confirmation ?? "").trim();
+
+    const transactionType = String(b.TransactionType ?? "").trim(); // "רגיל" | "תשלומים" | "הקמת הו\"ק" וכו'
+    const comments = String(b.Comments ?? "");
+    const phone = String(b.Phone ?? "");
+    const mail = String(b.Mail ?? "");
+    const amountRaw = toNum(b.Amount); // לפי הדוק: רגיל=סה"כ עסקה, HK=חודשי
+    const firstTashloum = toNum((b as any).FirstTashloum); // בתשלומים בלבד
+    const ragilTashlumim =
+      toInt((b as any).Tashlumim ?? (b as any).Tashloumim ?? 1) || 1;
+
+    // זיהוי סוג עסקה
+    const isHK =
+      /HK|הקמ|הו.?ק/i.test(transactionType) || String(b.KevaId ?? "").trim() !== "";
+
+    const isInstallments =
+      /תשלומים|installments/i.test(transactionType) || ragilTashlumim > 1;
+
+    // פירוק שם לקוח
     const parts = String(b.ClientName ?? "").trim().split(/\s+/);
     const firstName = parts.shift() ?? "";
     const lastName = parts.join(" ");
 
-    // סטטוס פנימי
-    let resultStatus: "HK_SETUP_OK" | "CHARGE_OK" | "DECLINED";
-    if (!statusOk) {
-      resultStatus = "DECLINED";
-    } else if (isHK) {
-      resultStatus = "HK_SETUP_OK"; // בהקמה אין אישור סליקה עדיין
+    // === לוגיקה אחידה לשמירה בבסיס נתונים ===
+    // החלטה עקרונית: תמיד שומרים Amount כ"תשלום לתקופה" (לתשלום אחד/למשל חודש),
+    // ושומרים NormalizedTotal לסיכומים כוללים כדי למנוע בלבול בצד ה-UI.
+
+    let amountPerPeriod = 0;
+    let periods = 1; // כמה "תקופות" (תשלומים/חודשים) הטרנזקציה כוללת
+    let normalizedTotal = 0;
+
+    if (isHK) {
+      // HK: על פי התיעוד Amount = סכום חודשי; מספר חודשים ב-Tashlumim (או ריק=ללא הגבלה)
+      const months = toInt((b as any).Tashlumim ?? (b as any).Month ?? 0); // אם "ללא הגבלה" יגיע ריק/0
+      amountPerPeriod = amountRaw; // חודשי
+      periods = months > 0 ? months : 1; // אם ללא הגבלה — שומרים 1, כדי לא לנפח
+      normalizedTotal = months > 0 ? amountPerPeriod * periods : amountPerPeriod; // אם לא ידוע חודשים, לא לכפול
+    } else if (isInstallments) {
+      // רגיל בתשלומים: לפי התיעוד Amount = סה"כ עסקה, Tashlumim=מס' תשלומים
+      periods = ragilTashlumim;
+      // אם FirstTashloum קיים (כמו בלוגים שלך) נעדיף אותו לתשלום בודד;
+      // אחרת נחלק את הסכום הכולל.
+      amountPerPeriod =
+        firstTashloum > 0 ? firstTashloum : Math.round((amountRaw / periods) * 100) / 100;
+
+      normalizedTotal = amountRaw; // סה"כ העסקה
     } else {
-      resultStatus = authorisation ? "CHARGE_OK" : "DECLINED";
+      // רגיל חד-פעמי: Amount = סה"כ עסקה, Tashlumim=1
+      periods = 1;
+      amountPerPeriod = amountRaw; // תשלום יחיד
+      normalizedTotal = amountRaw;
     }
 
-    // מיפוי לשדות השמירה:
-    // HK: Amount = חודשי, Tashlumim = מספר חודשים
-    // Ragil: Amount = כולל, Tashlumim = מתיבת הספק (אם קיימת)
-    const tashlumimRagil =
-      Number.parseInt(String(b.Tashlumim ?? b.Tashloumim ?? 1), 10) || 1;
+    // סטטוס פנימי (לוגים בלבד)
+    let resultStatus: "OK" | "DECLINED";
+    resultStatus = statusOk && authorisation ? "OK" : "DECLINED";
 
-    const amountToSave = amountRaw;
-    const tashlumimToSave = isHK ? (months || 1) : tashlumimRagil;
-
+    // הכנת דוק לשמירה
     const doc: PaymentDataToSave = {
       FirstName: firstName,
       LastName: lastName,
-      Phone: String(b.Phone ?? ""),
-      Amount: amountToSave,     // ב-HK זה חודשי, ברגיל זה כולל
-      Tashlumim: tashlumimToSave,
+      Phone: phone,
+      Mail: mail,
+      // לשמור Amount תמיד "לפי תקופה" כדי להיות עקביים
+      Amount: amountPerPeriod,
+      // Tashlumim = מספר התקופות (חודשים ב-HK | מספר תשלומים בתשלומים | 1 בחד-פעמי)
+      Tashlumim: periods,
       lizchut: "",
-      Comments: String(b.Comments ?? ""),
-      ref: extractRefFromComment(String(b.Comments ?? "")),
-    };
+      Comments: comments,
+      ref: extractRefFromComment(comments),
 
-    // (אופציונלי) אם יש לך שדות נוספים בסכמה, מומלץ לשמור מידע עוזר:
-    // doc.IsHK = isHK;
-    // doc.HKTotalPlanned = isHK ? amountRaw * tashlumimToSave : undefined;
-    // doc.NextDate = b.NextDate; // "08/09/2025" - לשקול פרסינג ל-ISO
-    // doc.ExternalId = b.ID;     // "1910386" - למניעת כפילויות
+      // אינפורמטיבי/אבחון
+      IsHK: isHK,
+      NormalizedTotal: normalizedTotal, // זה מה שמסכמים בצד שרת/UI
+      TransactionType: transactionType,
+      AuthorisationNumber: authorisation,
+      ExternalId: String(b.ID ?? ""),  // מומלץ לשמירת מניעת כפילויות
+      MasofId: String(b.MasofId ?? ""),
+      NextDate: String((b as any).NextDate ?? ""),
+    };
 
     const payment = new Payment(doc);
     await payment.save();
 
     console.log(
-      `✅ processed: ${isHK ? "HK (setup)" : "Ragil"}, monthly=${isHK ? amountRaw : "-"}, months=${isHK ? tashlumimToSave : "-"}, status=${resultStatus}`
+      `✅ processed: ${isHK ? "HK" : isInstallments ? "Ragil/Installments" : "Ragil/One-Time"}, perPeriod=${amountPerPeriod}, periods=${periods}, total=${normalizedTotal}, status=${resultStatus}`
     );
+
+    // חלק מהספקים דורשים תמיד 200
     res.status(200).send("OK");
   } catch (err) {
     console.error("❌ payment-callback error:", err);
-    // אם הספק דורש תמיד 200 - השאירי כך
     res.status(200).send("OK");
   }
 });
+
 
 
 // Extract ref from comments, e.g., "ref: XYZ123"

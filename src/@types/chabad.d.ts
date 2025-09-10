@@ -61,19 +61,25 @@ export interface PaymentInput {
   CallBackMailError?: string;
 
 }
-export interface PaymentDataToSave {
+export type PaymentDataToSave = {
   FirstName: string;
   LastName: string;
   Phone?: string;
-  Mail?: string;              // אם תרצי לשמור אימייל (לא חובה)
-  Amount: number;
-  Tashlumim: number;
+  Mail?: string;
+  Amount: number;        // לפי תקופה
+  Tashlumim: number;     // מספר תקופות
+  NormalizedTotal: number;
+  IsHK?: boolean;
+  TransactionType?: string;
+  AuthorisationNumber?: string;
+  ExternalId?: string;
+  MasofId?: string;
+  NextDate?: string;
   lizchut?: string;
-  Comments?: string;          // נשמר תחת Comments (עם alias ל-Comment)
+  Comments: string;
   ref?: string;
+};
 
-
-}
 
 
 export interface prices {
