@@ -25,7 +25,7 @@ export const paymentService = {
 
   savePayment: async (data: PaymentDataToSave) => {
     // מחפשים תשלום קיים לפי הטלפון
-    const existingPayment = await Payment.findOne({ FirstName: data.FirstName, LastName: data.LastName, Phone: data.Phone, ref: data.ref, lizchut: data.lizchut });
+    const existingPayment = await Payment.findOne({ FirstName: data.FirstName, LastName: data.LastName, Phone: data.Phone});
 
     if (existingPayment) {
       // אם יש, מחברים את הסכום החדש לישן
@@ -38,15 +38,16 @@ export const paymentService = {
       return existingPayment;
     } else {
       // אם לא קיים, יוצרים חדש
-      const newPaymentData = {
+      const newPaymentData:PaymentDataToSave= {
         FirstName: data.FirstName,
         LastName: data.LastName,
-        Phone: data.Phone,
-        Amount: data.Amount , // סכום כולל לפי מספר התשלומים
+        Amount: data.Amount,
         Tashlumim: data.Tashlumim || 1,
+        NormalizedTotal: data.Amount * (data.Tashlumim || 1),
         Comments: data.Comments,
-        ref: data.ref,
-        lizchut: data.lizchut,
+        Phone: data.Phone,
+        Mail: data.Mail,
+        IsHK: data.IsHK,
 
       };
 
