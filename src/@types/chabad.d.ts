@@ -78,6 +78,7 @@ export type PaymentDataToSave = {
   lizchut?: string;
   Comments: string;
   ref?: string;
+  Currency?: number;
 };
 
 
