@@ -49,6 +49,7 @@ export const paymentService = {
         Mail: data.Mail,
         IsHK: data.IsHK,
         ref: data.ref,
+        Currency: data.Currency || 1, // ברירת מחדל לשקל אם לא סופק
 
       };
 
