@@ -9,7 +9,7 @@ export const PaymentSchema = new mongoose.Schema<PaymentDataToSave>({
 
   // שימי לב: Amount נשמר "לפי תקופה" (לתשלום אחד/חודש).
   Amount: { type: Number, required: true },
-  Currency: { type: Number, required: true, default: 1 }, // ← חדש (ברירת מחדל לשקל)
+  currency: { type: Number, required: true, default: 1 }, // ← חדש (ברירת מחדל לשקל)
   // Tashlumim = מספר התקופות (מס' תשלומים/מס' חודשים בהו״ק)
   Tashlumim: { type: Number, required: true },
 

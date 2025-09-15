@@ -37,7 +37,7 @@ router.post("/payment-callback", express.json(), async (req, res) => {
     const phone = String(b.Phone ?? "");
     const mail = String(b.Mail ?? "");
     const amountRaw = toNum(b.Amount); // לפי הדוק: רגיל=סה"כ עסקה, HK=חודשי
-    const Currency = toInt(b.Currency) || 1; // 1=שקל, 2=דולר
+    const currency = toInt(b.Currency) || 1; // 1=שקל, 2=דולר
     const firstTashloum = toNum((b as any).FirstTashloum); // בתשלומים בלבד
     const ragilTashlumim =
       toInt((b as any).Tashlumim ?? (b as any).Tashloumim ?? 1) || 1;
@@ -101,7 +101,7 @@ router.post("/payment-callback", express.json(), async (req, res) => {
       lizchut: "",
       Comments: comments,
       ref: extractRefFromComment(comments),
-      Currency: Currency,
+      currency: currency,
       IsHK: isHK,
       NormalizedTotal: normalizedTotal, // זה מה שמסכמים בצד שרת/UI
       TransactionType: transactionType,
