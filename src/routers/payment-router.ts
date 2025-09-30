@@ -152,10 +152,9 @@ router.post("/nedarim/save", async (req, res) => {
 });
 
 //get all payments (public view)
-//get all payments (public view)
 router.get("/nedarim/payments", async (req, res) => {
   try {
-    const payments = await Payment.find({ Comment: { $ne: "כפרות" } }) // ← סינון מי ש-Comment שווה "כפרות"
+    const payments = await Payment.find({})
       .sort({ createdAt: -1 })
       .lean({ virtuals: true }); // מוסיף את ה־virtual PublicName
 
@@ -171,7 +170,6 @@ router.get("/nedarim/payments", async (req, res) => {
       .json({ message: "Failed to fetch payments: " + error.message });
   }
 });
-
 
 
 // get donations summary grouped by ref
