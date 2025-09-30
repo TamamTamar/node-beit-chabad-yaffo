@@ -152,9 +152,10 @@ router.post("/nedarim/save", async (req, res) => {
 });
 
 //get all payments (public view)
+//get all payments (public view)
 router.get("/nedarim/payments", async (req, res) => {
   try {
-    const payments = await Payment.find({})
+    const payments = await Payment.find({ Comment: { $ne: "כפרות" } }) // ← סינון מי ש-Comment שווה "כפרות"
       .sort({ createdAt: -1 })
       .lean({ virtuals: true }); // מוסיף את ה־virtual PublicName
 
@@ -173,6 +174,7 @@ router.get("/nedarim/payments", async (req, res) => {
 
 
 
+// get donations summary grouped by ref
 router.get("/donations-by-ref", async (req, res) => {
   try {
     const result = await Payment.aggregate([
@@ -216,7 +218,7 @@ router.get("/donations-by-ref", async (req, res) => {
 
 
 
-// server: payment-router.ts
+// get all donations with specific ref (case-insensitive)
 router.get("/donations/:ref", async (req, res, next) => {
   try {
     const ref = String(req.params.ref || "").trim();

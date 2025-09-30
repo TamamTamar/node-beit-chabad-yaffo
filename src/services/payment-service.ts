@@ -22,7 +22,7 @@ export const paymentService = {
     }
 
   },
-
+// פונקציה לשמירת תשלום
   savePayment: async (data: PaymentDataToSave) => {
     // מחפשים תשלום קיים לפי הטלפון
     const existingPayment = await Payment.findOne({ FirstName: data.FirstName, LastName: data.LastName, Phone: data.Phone});
